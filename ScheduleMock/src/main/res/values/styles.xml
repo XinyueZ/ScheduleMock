@@ -1,0 +1,13 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat">
+        <!-- Customize your theme here. -->
+    </style>
+
+	<style name="Home_Menu_Style">
+		<item name="android:layout_width">@dimen/home_menu_width</item>
+		<item name="android:layout_height">@dimen/home_menu_height</item>
+	</style>
+
+</resources>

@@ -1,0 +1,4 @@
+<resources>
+	<dimen name="home_menu_width">110dp</dimen>
+	<dimen name="home_menu_height">110dp</dimen>
+</resources>

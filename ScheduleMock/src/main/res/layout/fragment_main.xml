@@ -1,0 +1,35 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/black">
+
+
+	<Button
+			android:background="@drawable/ic_mock_one_time"
+			android:id="@+id/button"
+			android:layout_centerHorizontal="true"
+			android:layout_above="@+id/v_center_line"
+			style="@style/Home_Menu_Style"/>
+
+	<View
+			android:id="@+id/v_center_line"
+			android:layout_centerInParent="true"
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:background="@android:color/transparent"/>
+
+	<Button
+			style="@style/Home_Menu_Style"
+			android:id="@+id/button2"
+			android:background="@drawable/ic_schedule"
+			android:layout_alignParentLeft="true"
+			android:layout_below="@+id/v_center_line"/>
+
+	<Button
+			style="@style/Home_Menu_Style"
+			android:background="@drawable/ic_map"
+			android:id="@+id/button3"
+			android:layout_alignParentRight="true"
+			android:layout_below="@+id/v_center_line"/>
+</RelativeLayout>
