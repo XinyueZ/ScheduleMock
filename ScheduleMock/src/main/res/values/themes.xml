@@ -6,7 +6,7 @@
 			res/values-vXX/themes.xml, while customizations related to
 			backward-compatibility can go here.
 		-->
-		<item name="android:actionBarStyle">@style/ThisActionBar</item>
-		<item name="actionBarStyle">@style/ThisActionBar</item>
+		<item name="android:actionBarStyle">@style/ThisActionBar_Style</item>
+		<item name="actionBarStyle">@style/ThisActionBar_Style</item>
 	</style>
 </resources>

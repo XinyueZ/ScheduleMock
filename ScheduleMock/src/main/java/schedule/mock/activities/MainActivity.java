@@ -1,23 +1,25 @@
 package schedule.mock.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import schedule.mock.Constants;
 import schedule.mock.R;
 import schedule.mock.fragments.HomeFragment;
 
-public class MainActivity extends ActionBarActivity {
+public final class MainActivity extends BaseActivity {
 
-    @Override
+	public static final int LAYOUT = R.layout.activity_main;
+
+	@Override
     protected void onCreate(Bundle _savedInstanceState) {
         super.onCreate(_savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(LAYOUT);
 
         if (_savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, HomeFragment.newInstance(getApplicationContext()))
+                    .add(Constants.MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext()))
                     .commit();
         }
     }

@@ -1,13 +1,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/black">
+                android:background="@drawable/bg_main">
 
+	<include layout="@layout/inc_shadow_header"/>
 
 	<Button
 			android:background="@drawable/selector_btn_mock_one_time"
-			android:id="@+id/button"
+			android:id="@+id/btn_mock_one_time"
 			android:layout_centerHorizontal="true"
 			android:layout_above="@+id/v_center_line"
 			style="@style/Home_Menu_Style"/>
@@ -21,7 +21,7 @@
 
 	<Button
 			style="@style/Home_Menu_Style"
-			android:id="@+id/button2"
+			android:id="@+id/btn_schedule"
 			android:background="@drawable/selector_btn_schedule"
 			android:layout_alignParentLeft="true"
 			android:layout_below="@+id/v_center_line"/>
@@ -29,7 +29,7 @@
 	<Button
 			style="@style/Home_Menu_Style"
 			android:background="@drawable/selector_btn_map"
-			android:id="@+id/button3"
+			android:id="@+id/btn_map"
 			android:layout_alignParentRight="true"
 			android:layout_below="@+id/v_center_line"/>
 </RelativeLayout>
