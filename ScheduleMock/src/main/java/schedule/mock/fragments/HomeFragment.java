@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import schedule.mock.Constants;
+import schedule.mock.App;
 import schedule.mock.R;
 
 
@@ -44,7 +44,7 @@ public final class HomeFragment extends BaseFragment implements View.OnClickList
 						.beginTransaction()
 						.setCustomAnimations(R.anim.slide_in_from_down_to_top_fast, R.anim.no,
 								R.anim.no, R.anim.slide_out_from_top_to_down_fast)
-						.add(Constants.MAIN_CONTAINER, InputFragment.newInstance(getActivity())).addToBackStack(null).commit();
+						.add(App.MAIN_CONTAINER, InputFragment.newInstance(getActivity())).addToBackStack(null).commit();
 				break;
 			case R.id.btn_schedule:
 				break;

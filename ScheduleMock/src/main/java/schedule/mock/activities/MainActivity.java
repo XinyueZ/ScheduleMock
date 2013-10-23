@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import schedule.mock.Constants;
+import schedule.mock.App;
 import schedule.mock.R;
 import schedule.mock.fragments.HomeFragment;
 
@@ -19,7 +19,7 @@ public final class MainActivity extends BaseActivity {
 
         if (_savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(Constants.MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext()))
+                    .add(App.MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext()))
                     .commit();
         }
     }

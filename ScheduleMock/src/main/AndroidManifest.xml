@@ -67,7 +67,10 @@
 	</compatible-screens>
 
 	<uses-permission android:name="android.permission.INTERNET"/>
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 	<application
+			android:name=".App"
 			android:allowBackup="true" android:logo="@drawable/ic_launcher"
 			android:icon="@drawable/ic_launcher"
 			android:label="@string/app_name"
