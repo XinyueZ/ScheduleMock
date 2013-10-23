@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package schedule.mock;
+package schedule.mock.utils;
 
 import android.util.Log;
+
+import schedule.mock.BuildConfig;
 
 
 /**
