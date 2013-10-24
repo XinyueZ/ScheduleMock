@@ -2,15 +2,14 @@ package schedule.mock;
 
 import android.app.Application;
 
-import com.squareup.otto.Bus;
-
 import schedule.mock.prefs.Prefs;
 
 
 public final class App extends Application {
 
-	private static final Bus BUS = new Bus();
 	public static final int MAIN_CONTAINER = R.id.container;
+	public static final int COUNT_VOICE_RESULT = 1;
+	public static final int COUNT_GET_ADDRESS = 3;
 
 	@Override
 	public void onCreate() {
@@ -23,7 +22,4 @@ public final class App extends Application {
 		Prefs.createInstance(getApplicationContext());
 	}
 
-	public static Bus getBus() {
-		return BUS;
-	}
 }

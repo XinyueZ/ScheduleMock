@@ -2,18 +2,18 @@ package schedule.mock.activities;
 
 import android.support.v7.app.ActionBarActivity;
 
-import schedule.mock.App;
+import schedule.mock.utils.BusProvider;
 
 public abstract class BaseActivity extends ActionBarActivity  {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		App.getBus().register(this);
+		BusProvider.getBus().register(this);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		App.getBus().unregister(this);
+		BusProvider.getBus().unregister(this);
 	}
 }
