@@ -34,6 +34,8 @@ public final class Prefs extends BasicPrefs {
 	private final static String OS_VERSION = "DeviceData.osversion";
 	/** The Constant SIM_COUNTRY_ISO. */
 	private final static String SIM_COUNTRY_ISO = "DeviceData.country";
+	/**App preferences**/
+	private final static String KEY_RADIUS = "radius";
 	/** The Instance. */
 	private static Prefs sInstance;
 
@@ -226,7 +228,13 @@ public final class Prefs extends BasicPrefs {
 	}
 
 
+	public void setRadius(int _radius) {
+		setInt(KEY_RADIUS, _radius);
+	}
 
+	public int getRadius() {
+		return getInt(KEY_RADIUS, 100);
+	}
 
 	/**
 	 * Fetch Device "UDID" like iOS.
