@@ -8,8 +8,10 @@ import schedule.mock.R;
 import schedule.mock.data.DONearBy;
 import schedule.mock.data.DONearByResult;
 import schedule.mock.events.TaskSuccessEvent;
+import schedule.mock.events.UIPlaceListIsReadyEvent;
+import schedule.mock.events.UIShowPlaceListEvent;
 import schedule.mock.tasks.GetPlacesTask;
-import schedule.mock.utils.LL;
+import schedule.mock.utils.BusProvider;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -26,11 +28,15 @@ import com.squareup.otto.Subscribe;
 public final class InputFragment extends BaseFragment implements View.OnClickListener {
 
 	public static final int LAYOUT = R.layout.fragment_input;
+	public static final int CONTAINER_LAYOUT = R.id.fl_container;
 	private static final int REQUEST_CODE_VOICE_RECOGNITION = 1234;
+	DONearByResult[] mNearByResults;
+
 
 	public static InputFragment newInstance(Context _context) {
 		return (InputFragment) InputFragment.instantiate(_context, InputFragment.class.getName());
 	}
+
 
 	@Override
 	public View onCreateView(LayoutInflater _inflater, ViewGroup _container, Bundle _savedInstanceState) {
@@ -38,6 +44,7 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		startVoiceRecognitionActivityAndPayloadPlaces();
 		return rootView;
 	}
+
 
 	@Override
 	public void onViewCreated(View _view, Bundle _savedInstanceState) {
@@ -48,6 +55,7 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		}
 	}
 
+
 	private void startVoiceRecognitionActivityAndPayloadPlaces() {
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 		intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getClass().getPackage().getName());
@@ -56,6 +64,7 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, App.COUNT_VOICE_RESULT);
 		startActivityForResult(intent, REQUEST_CODE_VOICE_RECOGNITION);
 	}
+
 
 	@Override
 	public void onActivityResult(int _requestCode, int _resultCode, Intent _data) {
@@ -77,9 +86,11 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		super.onActivityResult(_requestCode, _resultCode, _data);
 	}
 
+
 	private void payloadPlaces(final String str) {
-		new GetPlacesTask(getActivity().getApplicationContext(), str)  .execute();
+		new GetPlacesTask(getActivity().getApplicationContext(), str).execute();
 	}
+
 
 	private void searchAndPayloadPlaces() {
 		View view = getView();
@@ -87,6 +98,7 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 			payloadPlaces(((TextView) view.findViewById(R.id.et_mocked_address_name)).getText().toString());
 		}
 	}
+
 
 	@Override
 	public void onClick(View _view) {
@@ -100,14 +112,26 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		}
 	}
 
+
 	@Subscribe
-	public void onTaskSuccessEvent( TaskSuccessEvent<DONearBy> _event ) {
+	public void onTaskSuccessEvent(TaskSuccessEvent<DONearBy> _event) {
 		DONearBy nearBy = _event.getData();
-		DONearByResult[] nearByResults = nearBy.getNearByResults();
-		if(nearByResults != null ) {
-			for (DONearByResult result : nearByResults) {
-				LL.i("Near by: " +result);
+		mNearByResults = nearBy.getNearByResults();
+		if (mNearByResults != null) {
+			View view = getView();
+			if (view != null) {
+				view.findViewById(R.id.btn_voice_input).setVisibility(View.GONE);
 			}
+			getChildFragmentManager().beginTransaction()
+					.setCustomAnimations(R.anim.hyperspace_in, R.anim.no, R.anim.no, R.anim.hyperspace_out)
+					.replace(CONTAINER_LAYOUT, PlaceListFragment.newInstance(getActivity().getApplicationContext()))
+					.addToBackStack(null).commit();
 		}
+	}
+
+
+	@Subscribe
+	public void onPlaceListIsReady(UIPlaceListIsReadyEvent _e) {
+		BusProvider.getBus().post(new UIShowPlaceListEvent(mNearByResults));
 	}
 }

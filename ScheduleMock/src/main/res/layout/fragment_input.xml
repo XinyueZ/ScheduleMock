@@ -13,13 +13,20 @@
 	<RelativeLayout
 			android:layout_height="match_parent"
 			android:layout_width="match_parent">
+
 		<schedule.mock.views.AnimiImageView
 				android:id="@+id/btn_voice_input"
 				android:layout_centerInParent="true"
 				android:src="@drawable/anim_voice_input"
 				android:background="@android:color/transparent"
-				android:layout_height="150dp" android:visibility="gone"
+				android:layout_height="150dp"
+				android:visibility="gone"
 				android:layout_width="150dp"/>
+
+		<FrameLayout
+				android:id="@+id/fl_container"
+				android:layout_height="match_parent"
+				android:layout_width="match_parent"/>
 	</RelativeLayout>
 
 </LinearLayout>

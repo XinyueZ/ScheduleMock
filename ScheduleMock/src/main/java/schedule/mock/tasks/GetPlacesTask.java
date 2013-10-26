@@ -9,6 +9,7 @@ import com.android.volley.Request;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import schedule.mock.App;
 import schedule.mock.data.DONearBy;
@@ -21,7 +22,7 @@ import schedule.mock.utils.BusProvider;
 import schedule.mock.utils.LL;
 
 
-public class GetPlacesTask extends AsyncTask<Void, Void, Void> {
+public class GetPlacesTask extends AsyncTask<Void, Void, DOPlace> {
 
 	private Context mContext;
 	private String mName;
@@ -32,13 +33,15 @@ public class GetPlacesTask extends AsyncTask<Void, Void, Void> {
 		mName = _name;
 	}
 
+
 	@Override
 	protected void onPreExecute() {
 		BusProvider.getBus().post(new UIShowLoadingEvent());
 	}
 
+
 	@Override
-	protected Void doInBackground(Void... _params) {
+	protected DOPlace doInBackground(Void... _params) {
 		Geocoder geocoder = new Geocoder(mContext);
 		try {
 			List<Address> addresses = geocoder.getFromLocationName(mName, App.COUNT_GET_ADDRESS);
@@ -47,13 +50,24 @@ public class GetPlacesTask extends AsyncTask<Void, Void, Void> {
 				DOPlace place = new DOPlace(mName, adr.getLatitude(), adr.getLongitude());
 				LL.d("Get an address construct for DOPlace:" + adr.toString());
 				LL.d(place.toString());
-				String url = String.format(App.API_NEAR_BY, place.getLatitude(), place.getLongitude(), Prefs.getInstance().getRadius());
-				BusProvider.getBus().post(new UIShowLoadingCompleteEvent());
-				new GsonRequest<DONearBy>(mContext, Request.Method.GET, url, DONearBy.class).execute();
+				return place;
+			} else {
+				return null;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+
+	@Override
+	protected void onPostExecute(DOPlace _place) {
+		if (_place != null) {
+			String url = String.format(App.API_NEAR_BY, _place.getLatitude(), _place.getLongitude(), Prefs
+					.getInstance().getRadius(), Locale.getDefault().getLanguage());
+			BusProvider.getBus().post(new UIShowLoadingCompleteEvent());
+			new GsonRequest<DONearBy>(mContext, Request.Method.GET, url, DONearBy.class).execute();
+		}
 	}
 }

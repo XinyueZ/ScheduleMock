@@ -4,8 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ScheduleMock.iml" filepath="$PROJECT_DIR$/ScheduleMock.iml" />
       <module fileurl="file://$PROJECT_DIR$/ScheduleMock/ScheduleMock-ScheduleMock.iml" filepath="$PROJECT_DIR$/ScheduleMock/ScheduleMock-ScheduleMock.iml" />
-      <module fileurl="file://$PROJECT_DIR$/submodules/ActionBar-PullToRefresh/extras/actionbarcompat/actionbarcompat.iml" filepath="$PROJECT_DIR$/submodules/ActionBar-PullToRefresh/extras/actionbarcompat/actionbarcompat.iml" />
-      <module fileurl="file://$PROJECT_DIR$/submodules/ActionBar-PullToRefresh/library/library.iml" filepath="$PROJECT_DIR$/submodules/ActionBar-PullToRefresh/library/library.iml" />
       <module fileurl="file://$PROJECT_DIR$/submodules/volley/volley.iml" filepath="$PROJECT_DIR$/submodules/volley/volley.iml" />
     </modules>
   </component>

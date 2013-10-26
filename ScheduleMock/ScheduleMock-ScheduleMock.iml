@@ -74,9 +74,9 @@
     <orderEntry type="library" exported="" name="ComAndroidSupportAppcompatV71800.aar" level="project" />
     <orderEntry type="library" exported="" name="otto-1.3.4" level="project" />
     <orderEntry type="library" exported="" name="gson-2.2.4" level="project" />
+    <orderEntry type="library" exported="" name="ComGithubChrisbanesActionbarpulltorefreshExtraAbc08.aar" level="project" />
+    <orderEntry type="library" exported="" name="ComGithubChrisbanesActionbarpulltorefreshLibrary08.aar" level="project" />
     <orderEntry type="module" module-name="volley" exported="" />
-    <orderEntry type="module" module-name="library" exported="" />
-    <orderEntry type="module" module-name="actionbarcompat" exported="" />
   </component>
 </module>
 

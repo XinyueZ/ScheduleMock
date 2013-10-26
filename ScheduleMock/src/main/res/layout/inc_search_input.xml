@@ -10,7 +10,7 @@
 			android:id="@+id/et_mocked_address_name"
 			android:maxLines="1"
 			android:minLines="1" android:background="@drawable/selector_ics_text_field"
-			android:singleLine="true"
+			android:singleLine="true" android:text="Große Elbstraße 39"
 			android:layout_height="wrap_content"
 			android:lines="1" android:hint="@string/hint_search_places"
 			android:layout_centerVertical="true"
