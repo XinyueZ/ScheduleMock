@@ -2,6 +2,8 @@ package schedule.mock.activities;
 
 import android.support.v7.app.ActionBarActivity;
 
+import schedule.mock.tasks.net.GsonRequest;
+import schedule.mock.tasks.net.TaskHelper;
 import schedule.mock.utils.BusProvider;
 
 public abstract class BaseActivity extends ActionBarActivity  {
@@ -15,5 +17,7 @@ public abstract class BaseActivity extends ActionBarActivity  {
 	protected void onPause() {
 		super.onPause();
 		BusProvider.getBus().unregister(this);
+
+		TaskHelper.getRequestQueue().cancelAll(GsonRequest.TAG);
 	}
 }

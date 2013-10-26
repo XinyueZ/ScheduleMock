@@ -1,4 +1,4 @@
-package schedule.mock.utils.net;
+package schedule.mock.tasks.net;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -24,8 +24,8 @@ public final class TaskHelper {
 	}
 
 
-	public static void init(Context context) {
-		sRequestQueue = Volley.newRequestQueue(context);
+	public static void init(Context _context) {
+		sRequestQueue = Volley.newRequestQueue(_context);
 		sImageLoader = new ImageLoader(sRequestQueue, new BitmapLruCache(MAX_IMAGE_CACHE_ENTIRES));
 	}
 
@@ -68,20 +68,20 @@ public final class TaskHelper {
 
 
 		@Override
-		protected int sizeOf(String key, Bitmap value) {
-			return value.getRowBytes() * value.getHeight();
+		protected int sizeOf(String _key, Bitmap _value) {
+			return _value.getRowBytes() * _value.getHeight();
 		}
 
 
 		@Override
-		public Bitmap getBitmap(String url) {
-			return get(url);
+		public Bitmap getBitmap(String _url) {
+			return get(_url);
 		}
 
 
 		@Override
-		public void putBitmap(String url, Bitmap bitmap) {
-			put(url, bitmap);
+		public void putBitmap(String _url, Bitmap _bitmap) {
+			put(_url, _bitmap);
 		}
 	}
 }

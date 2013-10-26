@@ -5,15 +5,23 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 
+import com.android.volley.Request;
+
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import schedule.mock.App;
+import schedule.mock.data.DONearBy;
 import schedule.mock.data.DOPlace;
+import schedule.mock.events.UIShowLoadingCompleteEvent;
+import schedule.mock.events.UIShowLoadingEvent;
+import schedule.mock.prefs.Prefs;
+import schedule.mock.tasks.net.GsonRequest;
+import schedule.mock.utils.BusProvider;
+import schedule.mock.utils.LL;
 
 
-public class GetPlacesTask extends AsyncTask<Void, Void, List<DOPlace>> {
+public class GetPlacesTask extends AsyncTask<Void, Void, Void> {
 
 	private Context mContext;
 	private String mName;
@@ -24,19 +32,28 @@ public class GetPlacesTask extends AsyncTask<Void, Void, List<DOPlace>> {
 		mName = _name;
 	}
 
+	@Override
+	protected void onPreExecute() {
+		BusProvider.getBus().post(new UIShowLoadingEvent());
+	}
 
 	@Override
-	protected List<DOPlace> doInBackground(Void... _params) {
+	protected Void doInBackground(Void... _params) {
 		Geocoder geocoder = new Geocoder(mContext);
-		List<DOPlace> placeList = new ArrayList<DOPlace>();
 		try {
 			List<Address> addresses = geocoder.getFromLocationName(mName, App.COUNT_GET_ADDRESS);
-			for(Address address : addresses) {
-				placeList.add(new DOPlace(mName, address.getLatitude(), address.getLongitude()));
+			if (addresses != null) {
+				Address adr = addresses.get(0);
+				DOPlace place = new DOPlace(mName, adr.getLatitude(), adr.getLongitude());
+				LL.d("Get an address construct for DOPlace:" + adr.toString());
+				LL.d(place.toString());
+				String url = String.format(App.API_NEAR_BY, place.getLatitude(), place.getLongitude(), Prefs.getInstance().getRadius());
+				BusProvider.getBus().post(new UIShowLoadingCompleteEvent());
+				new GsonRequest<DONearBy>(mContext, Request.Method.GET, url, DONearBy.class).execute();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return placeList;
+		return null;
 	}
 }
