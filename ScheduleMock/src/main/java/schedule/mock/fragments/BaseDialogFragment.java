@@ -13,7 +13,7 @@ import schedule.mock.tasks.net.TaskHelper;
 import schedule.mock.utils.BusProvider;
 
 
-public class BaseDialogFragment extends DialogFragment {
+public abstract class BaseDialogFragment extends DialogFragment {
 
 	protected static void show(FragmentActivity _activty, DialogFragment _dlgFrg, String _tagName) {
 		try {

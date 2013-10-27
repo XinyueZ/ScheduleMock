@@ -16,7 +16,7 @@ public final class App extends Application {
 	// public static final String API_PLACE_DETAILS =
 	// "https://maps.googleapis.com/maps/api/place/details/json?reference=%s&language=%s&sensor=true&key="
 	// + API_KEY;
-	public static final String API_STATIC_MAP = "http://maps.google.com/maps/api/staticmap?center=%s,%s&size=80x80&format=png&sensor=true&zoom=13&maptype=roadmap&markers=color:blue|label:%s|%s,%s";
+	public static final String API_STATIC_MAP = "http://maps.google.com/maps/api/staticmap?center=%s,%s&size=%s&format=png&sensor=true&zoom=%s&maptype=roadmap&markers=color:blue|label:%s|%s,%s";
 
 
 

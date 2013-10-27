@@ -1,6 +1,7 @@
 package schedule.mock.adapters;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -11,7 +12,10 @@ import com.android.volley.toolbox.NetworkImageView;
 import schedule.mock.App;
 import schedule.mock.R;
 import schedule.mock.data.DONearByResult;
+import schedule.mock.events.UIShowNetworkImageEvent;
 import schedule.mock.tasks.net.TaskHelper;
+import schedule.mock.utils.BusProvider;
+import schedule.mock.utils.DisplayUtil;
 import schedule.mock.utils.LL;
 
 
@@ -49,7 +53,7 @@ public final class PlaceListAdapter extends BaseAdapter {
 	@Override
 	public View getView(int _position, View _convertView, ViewGroup _viewGroup) {
 		ViewHolder holder;
-		DONearByResult nearByResult = mNearByResults[_position];
+		final DONearByResult nearByResult = mNearByResults[_position];
 		if (_convertView == null) {
 			_convertView = View.inflate(mContext, LAYOUT, null);
 			holder = new ViewHolder((NetworkImageView) _convertView.findViewById(R.id.iv_place_icon),
@@ -65,11 +69,27 @@ public final class PlaceListAdapter extends BaseAdapter {
 		try {
 			String url = String.format(App.API_STATIC_MAP,
 					nearByResult.getGeometry().getNearByLocation().getLatitude(), nearByResult.getGeometry()
-							.getNearByLocation().getLongitude(), "A", nearByResult.getGeometry().getNearByLocation().getLatitude(), nearByResult.getGeometry()
-					.getNearByLocation().getLongitude());
+							.getNearByLocation().getLongitude(), "80x80", "13", "A", nearByResult.getGeometry()
+							.getNearByLocation().getLatitude(), nearByResult.getGeometry().getNearByLocation()
+							.getLongitude());
 			LL.d("Preview:" + url);
 			holder.PlacePreview.setImageUrl(url, TaskHelper.getImageLoader());
+			holder.PlacePreview.setVisibility(View.VISIBLE);
+			holder.PlacePreview.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					DisplayMetrics displayMetrics = DisplayUtil.getDisplayMetrics(mContext);
+					BusProvider.getBus().post(
+							new UIShowNetworkImageEvent(String.format(App.API_STATIC_MAP, nearByResult.getGeometry()
+									.getNearByLocation().getLatitude(), nearByResult.getGeometry().getNearByLocation()
+									.getLongitude(), displayMetrics.widthPixels + "x" + displayMetrics.heightPixels,"17",
+									"A", nearByResult.getGeometry().getNearByLocation().getLatitude(), nearByResult
+											.getGeometry().getNearByLocation().getLongitude())));
+				}
+			});
 		} catch (NullPointerException e1) {
+			holder.PlacePreview.setVisibility(View.GONE);
 		}
 		try {
 			holder.Geolocation.setVisibility(View.VISIBLE);

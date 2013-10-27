@@ -14,19 +14,20 @@ import com.squareup.otto.Subscribe;
 import schedule.mock.R;
 import schedule.mock.adapters.PlaceListAdapter;
 import schedule.mock.events.UIPlaceListIsReadyEvent;
+import schedule.mock.events.UIShowNetworkImageEvent;
 import schedule.mock.events.UIShowPlaceListEvent;
 import schedule.mock.utils.BusProvider;
 
 
-public final class PlaceListFragment extends BaseDialogFragment implements View.OnClickListener {
-
+public final class PlaceListDialogFragment extends BaseDialogFragment implements View.OnClickListener {
+	private static final String TAG = "PlaceListDialogFragment";
 	public static final int LAYOUT = R.layout.fragment_place_list;
 
 
 	public static void showInstance(FragmentActivity _context) {
-		DialogFragment fragment = (DialogFragment) PlaceListFragment.instantiate(_context,
-				PlaceListFragment.class.getName());
-		show(  _context, fragment, null);
+		DialogFragment fragment = (DialogFragment) PlaceListDialogFragment.instantiate(_context,
+				PlaceListDialogFragment.class.getName());
+		show(  _context, fragment, TAG);
 	}
 
 
@@ -62,5 +63,10 @@ public final class PlaceListFragment extends BaseDialogFragment implements View.
 	@Override
 	public void onClick(View v) {
 		dismiss();
+	}
+
+	@Subscribe
+	public void onShowNetworkImage( UIShowNetworkImageEvent _e) {
+		ImageDialogFragment.showInstance(getActivity(), _e.getURL());
 	}
 }

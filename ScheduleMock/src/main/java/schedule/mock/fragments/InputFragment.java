@@ -116,8 +116,8 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 	public void onTaskSuccessEvent(TaskSuccessEvent<DONearBy> _event) {
 		DONearBy nearBy = _event.getData();
 		mNearByResults = nearBy.getNearByResults();
-		if (mNearByResults != null) { 
-			PlaceListFragment.showInstance(getActivity());
+		if (mNearByResults != null) {
+			PlaceListDialogFragment.showInstance(getActivity());
 		}
 	}
 

@@ -10,7 +10,9 @@
 		<item name="android:layout_height">@dimen/home_menu_height</item>
 	</style>
 
-
+	<style name="No_Title_Dialog_Style" parent="android:Theme.Dialog">
+		<item name="android:windowBackground">@android:color/transparent</item>
+	</style>
 
 	<style name="ThisActionBar_Style" parent="@style/Widget.AppCompat.Base.ActionBar">
 

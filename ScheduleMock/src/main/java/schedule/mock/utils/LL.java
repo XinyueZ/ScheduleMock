@@ -25,7 +25,7 @@ import schedule.mock.BuildConfig;
  * 
  * @author Chris Xinyue Zhao <hasszhao@gmail.com>
  */
-public class LL {
+public final class LL {
 
 	private static boolean mDebugable = BuildConfig.DEBUG;
 	private static final String DEBUG_TAG = "#!#!";
