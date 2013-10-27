@@ -22,11 +22,6 @@
 				android:layout_height="150dp"
 				android:visibility="gone"
 				android:layout_width="150dp"/>
-
-		<FrameLayout
-				android:id="@+id/fl_container"
-				android:layout_height="match_parent"
-				android:layout_width="match_parent"/>
 	</RelativeLayout>
 
 </LinearLayout>

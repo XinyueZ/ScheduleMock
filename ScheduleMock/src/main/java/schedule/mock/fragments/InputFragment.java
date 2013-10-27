@@ -28,7 +28,6 @@ import com.squareup.otto.Subscribe;
 public final class InputFragment extends BaseFragment implements View.OnClickListener {
 
 	public static final int LAYOUT = R.layout.fragment_input;
-	public static final int CONTAINER_LAYOUT = R.id.fl_container;
 	private static final int REQUEST_CODE_VOICE_RECOGNITION = 1234;
 	DONearByResult[] mNearByResults;
 
@@ -117,15 +116,8 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 	public void onTaskSuccessEvent(TaskSuccessEvent<DONearBy> _event) {
 		DONearBy nearBy = _event.getData();
 		mNearByResults = nearBy.getNearByResults();
-		if (mNearByResults != null) {
-			View view = getView();
-			if (view != null) {
-				view.findViewById(R.id.btn_voice_input).setVisibility(View.GONE);
-			}
-			getChildFragmentManager().beginTransaction()
-					.setCustomAnimations(R.anim.hyperspace_in, R.anim.no, R.anim.no, R.anim.hyperspace_out)
-					.replace(CONTAINER_LAYOUT, PlaceListFragment.newInstance(getActivity().getApplicationContext()))
-					.addToBackStack(null).commit();
+		if (mNearByResults != null) { 
+			PlaceListFragment.showInstance(getActivity());
 		}
 	}
 

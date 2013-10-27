@@ -1,11 +1,13 @@
 package schedule.mock.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
@@ -16,13 +18,15 @@ import schedule.mock.events.UIShowPlaceListEvent;
 import schedule.mock.utils.BusProvider;
 
 
-public final class PlaceListFragment extends BaseFragment {
+public final class PlaceListFragment extends BaseDialogFragment implements View.OnClickListener {
 
 	public static final int LAYOUT = R.layout.fragment_place_list;
 
 
-	public static PlaceListFragment newInstance(Context _context) {
-		return (PlaceListFragment) PlaceListFragment.instantiate(_context, PlaceListFragment.class.getName());
+	public static void showInstance(FragmentActivity _context) {
+		DialogFragment fragment = (DialogFragment) PlaceListFragment.instantiate(_context,
+				PlaceListFragment.class.getName());
+		show(  _context, fragment, null);
 	}
 
 
@@ -44,10 +48,19 @@ public final class PlaceListFragment extends BaseFragment {
 	public void onShowPlaceList(UIShowPlaceListEvent _e) {
 		View view = getView();
 		if (view != null && _e.getNearByResults() != null) {
+			View close = view.findViewById(R.id.btn_cyan);
+			((TextView)close).setText(R.string.general_close);
+			close.setOnClickListener(this);
 			PlaceListAdapter adapter = new PlaceListAdapter(getActivity().getApplicationContext(),
 					_e.getNearByResults());
 			ListView listView = (ListView) view.findViewById(R.id.lv_places);
 			listView.setAdapter(adapter);
+			getDialog().setTitle(R.string.title_mock_from_list);
 		}
+	}
+
+	@Override
+	public void onClick(View v) {
+		dismiss();
 	}
 }
