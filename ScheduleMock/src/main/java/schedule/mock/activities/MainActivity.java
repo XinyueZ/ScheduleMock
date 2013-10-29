@@ -12,11 +12,12 @@ import schedule.mock.R;
 import schedule.mock.events.UIShowLoadingCompleteEvent;
 import schedule.mock.events.UIShowLoadingEvent;
 import schedule.mock.fragments.HomeFragment;
+import schedule.mock.views.AnimiImageView;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshAttacher;
 
 
 public final class MainActivity extends BaseActivity implements
-		uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefreshListener {
+		uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefreshListener, View.OnClickListener {
 
 	public static final int LAYOUT = R.layout.activity_main;
 	private PullToRefreshAttacher mPullToRefreshAttacher;
@@ -32,6 +33,9 @@ public final class MainActivity extends BaseActivity implements
 			getSupportFragmentManager().beginTransaction()
 					.add(App.MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext())).commit();
 		}
+		View customView = getSupportActionBar().getCustomView();
+		View btnLocationTracking = customView.findViewById(R.id.btn_location_tracking);
+		btnLocationTracking.setOnClickListener(this);
 	}
 
 
@@ -88,5 +92,10 @@ public final class MainActivity extends BaseActivity implements
 
 	@Override
 	public void onRefreshStarted(View _view) {
+	}
+
+	@Override
+	public void onClick(View _v) {
+		((AnimiImageView)_v).toggle();
 	}
 }
