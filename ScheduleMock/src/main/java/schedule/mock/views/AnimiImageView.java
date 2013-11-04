@@ -5,6 +5,9 @@ import android.graphics.drawable.AnimationDrawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+import schedule.mock.R;
+import schedule.mock.utils.LL;
+
 
 public final class AnimiImageView extends ImageView {
 
@@ -39,14 +42,17 @@ public final class AnimiImageView extends ImageView {
 		if (!mIsAnim) {
 			post(mTask);
 			mIsAnim = true;
+			LL.d("Started Task runs");
 		}
 	}
 
 
 	public void stopAnim() {
 		if (mIsAnim) {
-			removeCallbacks(mTask); 
+			mTask.stopAnim();
+			removeCallbacks(mTask);
 			mIsAnim = false;
+			LL.d("Removed Task runs");
 		}
 	}
 
@@ -73,9 +79,20 @@ public final class AnimiImageView extends ImageView {
 		@Override
 		public void run() {
 			if (mImageView != null) {
+				LL.d("ImageView Task runs");
 				AnimationDrawable frameAnimation = (AnimationDrawable) mImageView.getDrawable();
 				frameAnimation.setCallback(mImageView);
 				frameAnimation.setVisible(true, true);
+			}
+		}
+
+		void stopAnim() {
+			if (mImageView != null) {
+				LL.d("ImageView Task runs");
+				AnimationDrawable frameAnimation = (AnimationDrawable) mImageView.getDrawable();
+				frameAnimation.setCallback(null);
+				frameAnimation.setVisible(true, false);
+				mImageView.setImageResource(R.drawable.anim_radar);
 			}
 		}
 	}
