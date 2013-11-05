@@ -95,7 +95,7 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 
 
 	private void payloadPlaces(final String str) {
-		String url = String.format(App.API_GEOCODE, Utils.encodedKeywords(str), Locale.getDefault()
+		String url = String.format(App.API_GEOCODE_TO_LATLNG, Utils.encodedKeywords(str), Locale.getDefault()
 				.getLanguage());
 		LL.d("Start geocode:" + url);
 		new GsonRequestTask<DOGeocode>(getActivity().getApplicationContext(), Request.Method.GET, url.trim(), DOGeocode.class)
@@ -134,15 +134,13 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 	@Subscribe
 	public void onDOGeocodeSuccess(DOGeocode _geocode) {
 		Context ctx = getActivity().getApplicationContext();
+		//FIXME There's a Check before the array being used.
 		DOGeocodeResult[] results = _geocode.getGeocodeResults();
 		DOGeocodeResult result = results[0];
 		DOGeometry geometry = result.getGeometry();
 		DOLatLng location = geometry.getNearByLocation();
 		double lat = location.getLatitude();
 		double lng = location.getLongitude();
-		// DOPlace place = new DOPlace(result.getFullAddress(), lat, lng);
-		// LL.d("Geocode result:" + place.toString());
-		// if (place != null) {
 		String url = String.format(App.API_NEAR_BY, lat, lng, Prefs.getInstance().getRadius(), Locale.getDefault()
 				.getLanguage());
 		LL.d("Start place near-by:" + url);
