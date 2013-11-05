@@ -5,7 +5,7 @@ import java.util.Locale;
 
 import schedule.mock.App;
 import schedule.mock.R;
-import schedule.mock.data.DOGeocode;
+import schedule.mock.data.DOGeocodeFromAddress;
 import schedule.mock.data.DOGeocodeResult;
 import schedule.mock.data.DOGeometry;
 import schedule.mock.data.DOLatLng;
@@ -95,10 +95,10 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 
 
 	private void payloadPlaces(final String str) {
-		String url = String.format(App.API_GEOCODE_TO_LATLNG, Utils.encodedKeywords(str), Locale.getDefault()
+		String url = String.format(App.API_GEOCODE_FROM_ADDRESS, Utils.encodedKeywords(str), Locale.getDefault()
 				.getLanguage());
 		LL.d("Start geocode:" + url);
-		new GsonRequestTask<DOGeocode>(getActivity().getApplicationContext(), Request.Method.GET, url.trim(), DOGeocode.class)
+		new GsonRequestTask<DOGeocodeFromAddress>(getActivity().getApplicationContext(), Request.Method.GET, url.trim(), DOGeocodeFromAddress.class)
 				.execute();
 	}
 
@@ -132,7 +132,7 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 	 * 
 	 * **/
 	@Subscribe
-	public void onDOGeocodeSuccess(DOGeocode _geocode) {
+	public void onDOGeocodeSuccess(DOGeocodeFromAddress _geocode) {
 		Context ctx = getActivity().getApplicationContext();
 		//FIXME There's a Check before the array being used.
 		DOGeocodeResult[] results = _geocode.getGeocodeResults();

@@ -7,10 +7,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.android.volley.Request;
 import com.squareup.otto.Subscribe;
+
+import java.util.Locale;
 
 import schedule.mock.App;
 import schedule.mock.R;
+import schedule.mock.data.DOGeocodeFromLatLan;
+import schedule.mock.data.DOGeocodeResult;
 import schedule.mock.events.ServiceLocationChangedEvent;
 import schedule.mock.events.StartLocationTrackingEvent;
 import schedule.mock.events.StopLocationTrackingEvent;
@@ -18,6 +23,9 @@ import schedule.mock.events.UIShowLoadingCompleteEvent;
 import schedule.mock.events.UIShowLoadingEvent;
 import schedule.mock.fragments.HomeFragment;
 import schedule.mock.services.StartLocationTrackingService;
+import schedule.mock.tasks.net.GsonRequestTask;
+import schedule.mock.utils.LL;
+import schedule.mock.utils.Utils;
 import schedule.mock.views.AnimiImageView;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshAttacher;
 
@@ -121,12 +129,41 @@ public final class MainActivity extends BaseActivity implements
 	}
 
 
+	/**
+	 * Has gotten the freshst location from trackings-services.
+	 * **/
 	@Subscribe
 	public void onServiceLocationChanged(ServiceLocationChangedEvent _e) {
+		/*
+		* Stop tracking current address.
+		* */
 		View customView = getSupportActionBar().getCustomView();
-		TextView currentLoction = (TextView) customView.findViewById(R.id.tv_current_location);
+		AnimiImageView btnLocationTracking = (AnimiImageView) customView.findViewById(R.id.btn_location_tracking);
+		btnLocationTracking.stopAnim();
+
 		double lat = _e.getLocation().getLatitude();
 		double lng = _e.getLocation().getLongitude();
-		currentLoction.setText(lat + "," + lng);
+		String url = String.format(App.API_GEOCODE_FROM_LAT_LAN, Utils.encodedKeywords(lat + "," + lng), Locale
+				.getDefault().getLanguage());
+		LL.d("Start geocode:" + url);
+		/*
+		* Translate from lanlat to string.
+		* */
+		new GsonRequestTask<DOGeocodeFromLatLan>(getApplicationContext(), Request.Method.GET, url.trim(),
+				DOGeocodeFromLatLan.class).execute();
+	}
+
+	/**
+	 * Get translated string of Geocode.
+	 * **/
+	@Subscribe
+	public void onDOGeocodeSuccess(DOGeocodeFromLatLan _geocode) {
+		View customView = getSupportActionBar().getCustomView();
+		TextView currentLoction = (TextView) customView.findViewById(R.id.tv_current_location);
+		// FIXME There's a Check before the array being used.
+		DOGeocodeResult[] results = _geocode.getGeocodeResults();
+		DOGeocodeResult result = results[0];
+		String fullAddress = result.getFullAddress();
+		currentLoction.setText(fullAddress);
 	}
 }

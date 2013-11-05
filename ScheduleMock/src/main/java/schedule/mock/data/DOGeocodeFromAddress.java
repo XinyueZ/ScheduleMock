@@ -3,7 +3,7 @@ package schedule.mock.data;
 import com.google.gson.annotations.SerializedName;
 
 
-public final class DOGeocode {
+public final  class DOGeocodeFromAddress {
 
 	@SerializedName("results")
 	private DOGeocodeResult[] mGeocodeResults;
