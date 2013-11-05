@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
-import schedule.mock.tasks.net.GsonRequest;
+import schedule.mock.tasks.net.GsonRequestTask;
 import schedule.mock.tasks.net.TaskHelper;
 import schedule.mock.utils.BusProvider;
 
@@ -20,6 +20,6 @@ public abstract class BaseFragment extends Fragment{
 	public void onDestroyView() {
 		super.onDestroyView();
 		BusProvider.getBus().unregister(this);
-		TaskHelper.getRequestQueue().cancelAll(GsonRequest.TAG);
+		TaskHelper.getRequestQueue().cancelAll(GsonRequestTask.TAG);
 	}
 }

@@ -3,7 +3,7 @@ package schedule.mock.data;
 
 import com.google.gson.annotations.SerializedName;
 
-public final class DONearByLocation {
+public final class DOLatLng {
 	@SerializedName("lat")
 	private double mLatitude;
 	@SerializedName("lng")

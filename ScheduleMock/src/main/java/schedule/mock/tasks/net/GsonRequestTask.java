@@ -18,20 +18,19 @@ import java.util.Map;
 import java.util.Set;
 
 import schedule.mock.events.TaskErrorEvent;
-import schedule.mock.events.TaskSuccessEvent;
 import schedule.mock.events.UIShowLoadingCompleteEvent;
 import schedule.mock.events.UIShowLoadingEvent;
 import schedule.mock.utils.BusProvider;
 import schedule.mock.utils.LL;
 
-public final class GsonRequest<T> extends Request<T> {
+public final class GsonRequestTask<T> extends Request<T> {
 
-	public static final String TAG = "GsonRequest";
+	public static final String TAG = "GsonRequestTask";
 	protected static final String COOKIE_KEY = "Cookie";
 	private final Listener<T> mSuccessListener = new Listener<T>() {
 		@Override
 		public void onResponse(T _response) {
-			BusProvider.getBus().post(new TaskSuccessEvent<T>(_response));
+			BusProvider.getBus().post(_response);
 			BusProvider.getBus().post(new UIShowLoadingCompleteEvent());
 		}
 	};
@@ -48,7 +47,7 @@ public final class GsonRequest<T> extends Request<T> {
 	private final Class<T> mClazz;
 
 
-	public GsonRequest(Context _context, int _method, String _url, Class<T> _clazz) {
+	public GsonRequestTask(Context _context, int _method, String _url, Class<T> _clazz) {
 		super(_method, _url, sErrorListener);
 		LL.d("Call: " + _url);
 		setShouldCache(true);
@@ -65,9 +64,7 @@ public final class GsonRequest<T> extends Request<T> {
 			Set<String> keys = headers.keySet();
 			LL.e(new StringBuilder().append("Status ").append(response.statusCode).toString());
 			for (String key : keys) {
-				LL.e(key);
-				LL.e("  ==>");
-				LL.e(headers.get(key));
+				LL.e(key + " ==> "+ headers.get(key));
 			}
 		}
 	}

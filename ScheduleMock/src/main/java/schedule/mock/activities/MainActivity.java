@@ -1,17 +1,23 @@
 package schedule.mock.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
 import schedule.mock.App;
 import schedule.mock.R;
+import schedule.mock.events.ServiceLocationChangedEvent;
+import schedule.mock.events.StartLocationTrackingEvent;
+import schedule.mock.events.StopLocationTrackingEvent;
 import schedule.mock.events.UIShowLoadingCompleteEvent;
 import schedule.mock.events.UIShowLoadingEvent;
 import schedule.mock.fragments.HomeFragment;
+import schedule.mock.services.StartLocationTrackingService;
 import schedule.mock.views.AnimiImageView;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshAttacher;
 
@@ -45,12 +51,14 @@ public final class MainActivity extends BaseActivity implements
 		super.onDestroy();
 	}
 
+
 	@Subscribe
 	public void onUIShowLoadingEvent(UIShowLoadingEvent _event) {
 		if (mPullToRefreshAttacher != null) {
 			mPullToRefreshAttacher.setRefreshing(true);
 		}
 	}
+
 
 	@Subscribe
 	public void onUIShowLoadingCompleteEvent(UIShowLoadingCompleteEvent _event) {
@@ -94,8 +102,31 @@ public final class MainActivity extends BaseActivity implements
 	public void onRefreshStarted(View _view) {
 	}
 
+
 	@Override
 	public void onClick(View _v) {
-		((AnimiImageView)_v).toggle();
+		((AnimiImageView) _v).toggle();
+	}
+
+
+	@Subscribe
+	public void onStartLocationTracking(StartLocationTrackingEvent _e) {
+		startService(new Intent(getApplicationContext(), StartLocationTrackingService.class));
+	}
+
+
+	@Subscribe
+	public void onStopLocationTracking(StopLocationTrackingEvent _e) {
+		stopService(new Intent(getApplicationContext(), StartLocationTrackingService.class));
+	}
+
+
+	@Subscribe
+	public void onServiceLocationChanged(ServiceLocationChangedEvent _e) {
+		View customView = getSupportActionBar().getCustomView();
+		TextView currentLoction = (TextView) customView.findViewById(R.id.tv_current_location);
+		double lat = _e.getLocation().getLatitude();
+		double lng = _e.getLocation().getLongitude();
+		currentLoction.setText(lat + "," + lng);
 	}
 }

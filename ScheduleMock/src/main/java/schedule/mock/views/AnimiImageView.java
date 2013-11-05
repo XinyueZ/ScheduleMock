@@ -6,6 +6,9 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 import schedule.mock.R;
+import schedule.mock.events.StartLocationTrackingEvent;
+import schedule.mock.events.StopLocationTrackingEvent;
+import schedule.mock.utils.BusProvider;
 import schedule.mock.utils.LL;
 
 
@@ -42,6 +45,7 @@ public final class AnimiImageView extends ImageView {
 		if (!mIsAnim) {
 			post(mTask);
 			mIsAnim = true;
+			BusProvider.getBus().post(new StartLocationTrackingEvent());
 			LL.d("Started Task runs");
 		}
 	}
@@ -52,6 +56,7 @@ public final class AnimiImageView extends ImageView {
 			mTask.stopAnim();
 			removeCallbacks(mTask);
 			mIsAnim = false;
+			BusProvider.getBus().post(new StopLocationTrackingEvent());
 			LL.d("Removed Task runs");
 		}
 	}
@@ -64,6 +69,7 @@ public final class AnimiImageView extends ImageView {
 			stopAnim();
 		}
 	}
+
 
 
 	static class Task implements Runnable {
@@ -85,6 +91,7 @@ public final class AnimiImageView extends ImageView {
 				frameAnimation.setVisible(true, true);
 			}
 		}
+
 
 		void stopAnim() {
 			if (mImageView != null) {

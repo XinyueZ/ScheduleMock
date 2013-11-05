@@ -13,9 +13,10 @@ import com.google.android.gms.location.LocationRequest;
 
 import schedule.mock.events.ServiceLocationChangedEvent;
 import schedule.mock.utils.BusProvider;
+import schedule.mock.utils.LL;
 
 
-public final class StartLocationTracking extends Service implements GooglePlayServicesClient.ConnectionCallbacks,
+public final class StartLocationTrackingService extends Service implements GooglePlayServicesClient.ConnectionCallbacks,
 		GooglePlayServicesClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
 	static final int LOCATION_SEARCH_FASTEST_INTERVAL = 3000;
@@ -27,6 +28,7 @@ public final class StartLocationTracking extends Service implements GooglePlaySe
 	public void onCreate() {
 		super.onCreate();
 		mLocationClient = new LocationClient(this, this, this);
+		mLocationClient.connect();
 	}
 
 
@@ -53,6 +55,7 @@ public final class StartLocationTracking extends Service implements GooglePlaySe
 		Location l = mLocationClient.getLastLocation();
 		if (l != null) {
 			BusProvider.getBus().post(new ServiceLocationChangedEvent(l));
+			LL.d("startTracking -> onLocationChanged");
 		} else {
 			try {
 				LocationRequest req = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -68,6 +71,7 @@ public final class StartLocationTracking extends Service implements GooglePlaySe
 	@Override
 	public void onLocationChanged(Location _location) {
 		BusProvider.getBus().post(new ServiceLocationChangedEvent(_location));
+		LL.d("onLocationChanged");
 	}
 
 

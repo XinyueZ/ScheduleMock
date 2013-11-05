@@ -4,6 +4,7 @@
 <RelativeLayout
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_height="wrap_content"
+		android:padding="0dp"
 		android:layout_width="match_parent">
 
 	<EditText
@@ -16,18 +17,30 @@
 			android:layout_height="wrap_content"
 			android:lines="1"
 			android:hint="@string/hint_search_places"
-			android:layout_centerVertical="true"
 			android:layout_toLeftOf="@+id/btn_search"
-			android:layout_alignBottom="@+id/btn_search"
 			android:layout_width="match_parent"/>
 
-
+	<EditText
+			android:id="@+id/et_mocked_city_name"
+			android:maxLines="1"
+			android:minLines="1"
+			android:background="@drawable/selector_ics_text_field"
+			android:singleLine="true"
+			android:layout_alignLeft="@+id/et_mocked_address_name"
+			android:text="Hamburg"
+			android:layout_height="wrap_content"
+			android:lines="1"
+			android:layout_below="@+id/btn_search"
+			android:hint="@string/hint_search_city"
+			android:layout_alignParentLeft="true"
+			android:layout_toLeftOf="@+id/btn_search"
+			android:layout_width="match_parent"/>
 
 	<ImageButton
 			android:id="@+id/btn_search"
-			android:layout_centerVertical="true"
 			android:src="@drawable/selector_btn_search"
 			android:layout_alignParentRight="true"
+			android:layout_alignTop="@+id/et_mocked_address_name"
 			android:background="@android:color/transparent"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"/>

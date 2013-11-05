@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 public final class DONearByResult {
 
 	@SerializedName("geometry")
-	private DONearByGeometry mGeometry;
+	private DOGeometry mGeometry;
 	@SerializedName("icon")
 	private String mIcon;
 	@SerializedName("id")
@@ -19,12 +19,12 @@ public final class DONearByResult {
 	private String mVicinity;
 
 
-	public DONearByGeometry getGeometry() {
+	public DOGeometry getGeometry() {
 		return mGeometry;
 	}
 
 
-	public void setGeometry(DONearByGeometry _geometry) {
+	public void setGeometry(DOGeometry _geometry) {
 		mGeometry = _geometry;
 	}
 

@@ -87,7 +87,7 @@
 				<category android:name="android.intent.category.LAUNCHER"/>
 			</intent-filter>
 		</activity>
-		<service android:name=".services.StartLocationTracking"/>
+		<service android:name=".services.StartLocationTrackingService"/>
 	</application>
 
 </manifest>

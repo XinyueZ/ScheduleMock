@@ -17,7 +17,7 @@ public final class App extends Application {
 	// "https://maps.googleapis.com/maps/api/place/details/json?reference=%s&language=%s&sensor=true&key="
 	// + API_KEY;
 	public static final String API_STATIC_MAP = "http://maps.google.com/maps/api/staticmap?center=%s,%s&size=%s&format=png&sensor=true&zoom=%s&maptype=roadmap&markers=color:blue|label:%s|%s,%s";
-
+	public static final String API_GEOCODE = "http://maps.google.com/maps/api/geocode/json?address=%s&sensor=false&language=%s";
 
 
 	@Override

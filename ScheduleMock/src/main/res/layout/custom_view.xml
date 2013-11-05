@@ -4,6 +4,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+	<TextView
+			android:id="@+id/tv_current_location"
+			android:maxLines="1"
+			android:minLines="1"
+			android:background="@drawable/selector_ics_text_field"
+			android:singleLine="true"
+			android:ellipsize="end"
+			android:layout_height="wrap_content"
+			android:lines="1"
+			android:hint="@string/hint_search_places"
+			android:layout_centerVertical="true"
+			android:layout_width="match_parent"/>
+
 	<schedule.mock.views.AnimiImageView
 			android:id="@+id/btn_location_tracking"
 			android:layout_centerInParent="true"
