@@ -15,6 +15,7 @@
 			android:singleLine="true"
 			android:layout_height="wrap_content"
 			android:lines="1"
+			android:inputType="textNoSuggestions"
 			android:hint="@string/hint_search_street"
 			android:layout_toLeftOf="@+id/btn_search"
 			android:layout_width="match_parent"/>
