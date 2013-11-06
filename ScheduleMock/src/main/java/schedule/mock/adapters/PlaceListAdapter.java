@@ -68,9 +68,9 @@ public final class PlaceListAdapter extends BaseAdapter {
 		holder.PlaceName.setText(nearByResult.getName());
 		try {
 			String url = String.format(App.API_STATIC_MAP,
-					nearByResult.getGeometry().getNearByLocation().getLatitude(), nearByResult.getGeometry()
-							.getNearByLocation().getLongitude(), "80x80", "13", "A", nearByResult.getGeometry()
-							.getNearByLocation().getLatitude(), nearByResult.getGeometry().getNearByLocation()
+					nearByResult.getGeometry().getLocation().getLatitude(), nearByResult.getGeometry()
+							.getLocation().getLongitude(), "80x80", "13", "A", nearByResult.getGeometry()
+							.getLocation().getLatitude(), nearByResult.getGeometry().getLocation()
 							.getLongitude());
 			LL.d("Preview:" + url);
 			holder.PlacePreview.setImageUrl(url, TaskHelper.getImageLoader());
@@ -82,10 +82,10 @@ public final class PlaceListAdapter extends BaseAdapter {
 					DisplayMetrics displayMetrics = DisplayUtil.getDisplayMetrics(mContext);
 					BusProvider.getBus().post(
 							new UIShowNetworkImageEvent(String.format(App.API_STATIC_MAP, nearByResult.getGeometry()
-									.getNearByLocation().getLatitude(), nearByResult.getGeometry().getNearByLocation()
+									.getLocation().getLatitude(), nearByResult.getGeometry().getLocation()
 									.getLongitude(), displayMetrics.widthPixels + "x" + displayMetrics.heightPixels,"17",
-									"A", nearByResult.getGeometry().getNearByLocation().getLatitude(), nearByResult
-											.getGeometry().getNearByLocation().getLongitude())));
+									"A", nearByResult.getGeometry().getLocation().getLatitude(), nearByResult
+											.getGeometry().getLocation().getLongitude())));
 				}
 			});
 		} catch (NullPointerException e1) {
@@ -94,8 +94,8 @@ public final class PlaceListAdapter extends BaseAdapter {
 		try {
 			holder.Geolocation.setVisibility(View.VISIBLE);
 			holder.Geolocation.setText(new StringBuilder()
-					.append(nearByResult.getGeometry().getNearByLocation().getLatitude()).append(',')
-					.append(nearByResult.getGeometry().getNearByLocation().getLongitude()).toString());
+					.append(nearByResult.getGeometry().getLocation().getLatitude()).append(',')
+					.append(nearByResult.getGeometry().getLocation().getLongitude()).toString());
 		} catch (NullPointerException e2) {
 			holder.Geolocation.setVisibility(View.GONE);
 		}

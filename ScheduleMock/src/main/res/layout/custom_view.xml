@@ -13,7 +13,7 @@
 			android:layout_height="wrap_content"
 			android:lines="1"
 			android:gravity="center_vertical"
-			android:hint="@string/hint_search_places"
+			android:hint="@string/hint_current_location"
 			android:layout_toLeftOf="@+id/btn_location_tracking"
 			android:layout_centerVertical="true"
 			android:focusable="true"

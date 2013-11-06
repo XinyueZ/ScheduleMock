@@ -32,4 +32,5 @@ dependencies {
     compile project(':submodules:volley')
     compile 'com.github.chrisbanes.actionbarpulltorefresh:library:0.8'
     compile 'com.github.chrisbanes.actionbarpulltorefresh:extra-abc:0.8'
+    compile files('./libs/commons-lang3-3.1.jar')
 }

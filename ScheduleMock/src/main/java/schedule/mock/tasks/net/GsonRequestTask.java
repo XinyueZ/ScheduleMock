@@ -91,7 +91,7 @@ public final class GsonRequestTask<T> extends Request<T> {
 
 
 	public void execute() {
-		BusProvider.getBus().post(new UIShowLoadingEvent());
+		BusProvider.getBus().post(new UIShowLoadingEvent(mClazz));
 		RequestQueue queue = TaskHelper.getRequestQueue();
 		queue.add(this);
 	}

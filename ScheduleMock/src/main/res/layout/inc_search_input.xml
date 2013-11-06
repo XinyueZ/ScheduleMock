@@ -8,15 +8,14 @@
 		android:layout_width="match_parent">
 
 	<EditText
-			android:id="@+id/et_mocked_address_name"
+			android:id="@+id/et_mocked_street_name"
 			android:maxLines="1"
 			android:minLines="1"
 			android:background="@drawable/selector_ics_text_field"
 			android:singleLine="true"
-			android:text="Große Elbstraße 39"
 			android:layout_height="wrap_content"
 			android:lines="1"
-			android:hint="@string/hint_search_places"
+			android:hint="@string/hint_search_street"
 			android:layout_toLeftOf="@+id/btn_search"
 			android:layout_width="match_parent"/>
 
@@ -26,8 +25,7 @@
 			android:minLines="1"
 			android:background="@drawable/selector_ics_text_field"
 			android:singleLine="true"
-			android:layout_alignLeft="@+id/et_mocked_address_name"
-			android:text="Hamburg"
+			android:layout_alignLeft="@+id/et_mocked_street_name"
 			android:layout_height="wrap_content"
 			android:lines="1"
 			android:layout_below="@+id/btn_search"
@@ -36,11 +34,41 @@
 			android:layout_toLeftOf="@+id/btn_search"
 			android:layout_width="match_parent"/>
 
+	<EditText
+			android:id="@+id/et_mocked_county_name"
+			android:maxLines="1"
+			android:minLines="1"
+			android:background="@drawable/selector_ics_text_field"
+			android:singleLine="true"
+			android:layout_alignLeft="@+id/et_mocked_street_name"
+			android:layout_height="wrap_content"
+			android:lines="1"
+			android:layout_below="@+id/et_mocked_city_name"
+			android:hint="@string/hint_search_country"
+			android:layout_alignParentLeft="true"
+			android:layout_toLeftOf="@+id/btn_search"
+			android:layout_width="match_parent"/>
+
+
+	<TextView
+			android:id="@+id/tv_mocked_lanlng"
+			android:maxLines="1"
+			android:minLines="1"
+			android:background="@drawable/selector_ics_text_field"
+			android:singleLine="true"
+			android:layout_alignLeft="@+id/et_mocked_street_name"
+			android:layout_height="wrap_content"
+			android:lines="1"
+			android:layout_below="@+id/et_mocked_county_name"
+			android:layout_alignParentLeft="true"
+			android:layout_toLeftOf="@+id/btn_search"
+			android:layout_width="match_parent"/>
+
 	<ImageButton
 			android:id="@+id/btn_search"
 			android:src="@drawable/selector_btn_search"
 			android:layout_alignParentRight="true"
-			android:layout_alignTop="@+id/et_mocked_address_name"
+			android:layout_alignTop="@+id/et_mocked_street_name"
 			android:background="@android:color/transparent"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"/>

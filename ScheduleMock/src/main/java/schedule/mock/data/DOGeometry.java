@@ -4,13 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 public final class DOGeometry {
 	@SerializedName("location")
-	private DOLatLng mNearByLocation;
+	private DOLatLng mLocation;
 
-	public DOLatLng getNearByLocation() {
-		return mNearByLocation;
+	public DOLatLng getLocation() {
+		return mLocation;
 	}
 
-	public void setNearByLocation(DOLatLng _nearByLocation) {
-		mNearByLocation = _nearByLocation;
+	public void setLocation(DOLatLng _location) {
+		mLocation = _location;
 	}
 }
