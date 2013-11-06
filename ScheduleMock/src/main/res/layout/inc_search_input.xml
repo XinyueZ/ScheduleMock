@@ -28,6 +28,7 @@
 			android:layout_alignLeft="@+id/et_mocked_street_name"
 			android:layout_height="wrap_content"
 			android:lines="1"
+			android:inputType="textNoSuggestions"
 			android:layout_below="@+id/btn_search"
 			android:hint="@string/hint_search_city"
 			android:layout_alignParentLeft="true"
@@ -43,6 +44,7 @@
 			android:layout_alignLeft="@+id/et_mocked_street_name"
 			android:layout_height="wrap_content"
 			android:lines="1"
+			android:inputType="textNoSuggestions"
 			android:layout_below="@+id/et_mocked_city_name"
 			android:hint="@string/hint_search_country"
 			android:layout_alignParentLeft="true"
@@ -50,11 +52,14 @@
 			android:layout_width="match_parent"/>
 
 
-	<TextView
+	<EditText
 			android:id="@+id/tv_mocked_lanlng"
 			android:maxLines="1"
-			android:minLines="1"
 			android:background="@drawable/selector_ics_text_field"
+			android:minLines="1"
+			android:visibility="gone"
+			android:enabled="false"
+			android:inputType="textNoSuggestions"
 			android:singleLine="true"
 			android:layout_alignLeft="@+id/et_mocked_street_name"
 			android:layout_height="wrap_content"

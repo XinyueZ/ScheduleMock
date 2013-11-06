@@ -8,6 +8,7 @@
 	<string name="hint_search_city">City</string>
 	<string name="hint_search_country">Country</string>
 	<string name="hint_current_location">Current location</string>
+	<string name="warning_input_address">You should input an address.</string>
 	<string name="general_ok">Ok</string>
 	<string name="general_yes">Yes</string>
 	<string name="general_no">No</string>

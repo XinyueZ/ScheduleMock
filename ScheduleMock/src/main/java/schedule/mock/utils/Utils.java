@@ -1,6 +1,9 @@
 package schedule.mock.utils;
 
 
+import android.content.Context;
+import android.widget.Toast;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -25,5 +28,24 @@ public final class Utils {
 					.replace( "_", "%5F" ).replace( "`", "%60" ).replace( "{", "%7B" )
 					.replace( "|", "%7C" ).replace( "}", "%7D" ) );
 		}
+	}
+
+
+	public static void showLongToast(Context _context, int _messageId) {
+		Toast.makeText(_context, _context.getString(_messageId),
+				Toast.LENGTH_LONG).show();
+	}
+
+	public static void showShortToast(Context _context, int _messageId) {
+		Toast.makeText(_context, _context.getString(_messageId),
+				Toast.LENGTH_SHORT).show();
+	}
+
+	public static void showLongToast(Context _context, String _message) {
+		Toast.makeText(_context, _message, Toast.LENGTH_LONG).show();
+	}
+
+	public static void showShortToast(Context _context, String _message) {
+		Toast.makeText(_context, _message, Toast.LENGTH_SHORT).show();
 	}
 }

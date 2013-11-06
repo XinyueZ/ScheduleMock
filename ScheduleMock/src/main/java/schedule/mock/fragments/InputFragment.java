@@ -1,10 +1,30 @@
 package schedule.mock.fragments;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.speech.RecognizerIntent;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.squareup.otto.Subscribe;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
 import schedule.mock.App;
+import schedule.mock.BuildConfig;
 import schedule.mock.R;
+import schedule.mock.data.DOGecodeFromVoiceAddress;
 import schedule.mock.data.DOGeocodeFromAddress;
 import schedule.mock.data.DOGeocodeFromLatLng;
 import schedule.mock.data.DOGeocodeResult;
@@ -20,21 +40,6 @@ import schedule.mock.utils.BusProvider;
 import schedule.mock.utils.GeocodeUtil;
 import schedule.mock.utils.LL;
 import schedule.mock.utils.Utils;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.speech.RecognizerIntent;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
-
-import com.android.volley.Request;
-import com.squareup.otto.Subscribe;
 
 
 public final class InputFragment extends BaseFragment implements View.OnClickListener, TextWatcher {
@@ -61,10 +66,12 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 	public void onViewCreated(View _view, Bundle _savedInstanceState) {
 		super.onViewCreated(_view, _savedInstanceState);
 		if (_view != null) {
-			_view.findViewById(R.id.btn_search).setOnClickListener(this);
-			_view.findViewById(R.id.btn_voice_input).setOnClickListener(this);
+			View search = _view.findViewById(R.id.btn_search);
+			search.setOnClickListener(this);
+			ImageView voiceInput = (ImageView) _view.findViewById(R.id.btn_voice_input);
+			voiceInput.setOnClickListener(this);
 			/*
-			 * Any tip on street, city, country inputs the hidden text for
+			 * Any tap on street, city, country inputs the hidden text for
 			 * latlng will be cleared.
 			 */
 			EditText street = (EditText) _view.findViewById(R.id.et_mocked_street_name);
@@ -97,12 +104,11 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 				if (_resultCode == Activity.RESULT_OK) {
 					ArrayList<String> matches = _data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 					if (matches != null) {
-						payloadPlaces(matches.get(0));
-					}
-				} else {
-					View view = getView();
-					if (view != null) {
-						view.findViewById(R.id.btn_voice_input).setVisibility(View.VISIBLE);
+						/*
+						 * Try to validate the voice-input address.
+						 */
+						clearHiddenLatLng();
+						searchVoicePlace(matches.get(0));
 					}
 				}
 				break;
@@ -111,22 +117,43 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 	}
 
 
-	private void payloadPlaces(final String str) {
-		String url = String.format(App.API_GEOCODE_FROM_ADDRESS, Utils.encodedKeywords(str), Locale.getDefault()
+	/**
+	 * Get near-by places through voice input. To find latlng then fill boxes of
+	 * location and finish.
+	 * 
+	 * @param _str
+	 */
+	private void searchVoicePlace(String _str) {
+		String url = String.format(App.API_GEOCODE_FROM_ADDRESS, Utils.encodedKeywords(_str), Locale.getDefault()
 				.getLanguage());
-		LL.d("Start geocode:" + url);
-		new GsonRequestTask<DOGeocodeFromAddress>(getActivity().getApplicationContext(), Request.Method.GET,
-				url.trim(), DOGeocodeFromAddress.class).execute();
+		/*
+		 * Try to get latlng first.
+		 */
+		new GsonRequestTask<DOGecodeFromVoiceAddress>(getActivity().getApplicationContext(), Request.Method.GET,
+				url.trim(), DOGecodeFromVoiceAddress.class).execute();
 	}
 
 
-	private void searchAndPayloadPlaces() {
+	/**
+	 * Get near-by from boxes. To find latlng first and finish.
+	 */
+	private void searchInputPlaces() {
 		View view = getView();
 		if (view != null) {
 			String address = ((TextView) view.findViewById(R.id.et_mocked_street_name)).getText().toString();
 			String city = ((TextView) view.findViewById(R.id.et_mocked_city_name)).getText().toString();
 			String fullLocation = new StringBuilder().append(address).append(city).toString();
-			payloadPlaces(fullLocation);
+			String url = String.format(App.API_GEOCODE_FROM_ADDRESS, Utils.encodedKeywords(fullLocation), Locale
+					.getDefault().getLanguage());
+			/*
+			 * Try to get latlng first.
+			 */
+			if (!TextUtils.isEmpty(address)) {
+				new GsonRequestTask<DOGeocodeFromAddress>(getActivity().getApplicationContext(), Request.Method.GET,
+						url.trim(), DOGeocodeFromAddress.class).execute();
+			} else {
+				Utils.showLongToast(getActivity().getApplicationContext(), R.string.warning_input_address);
+			}
 		}
 	}
 
@@ -135,7 +162,7 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 	public void onClick(View _view) {
 		switch (_view.getId()) {
 			case R.id.btn_search:
-				searchAndPayloadPlaces();
+				searchInputPlaces();
 				break;
 			case R.id.btn_voice_input:
 				startVoiceRecognitionActivityAndPayloadPlaces();
@@ -145,8 +172,8 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 
 
 	/**
-	 * Finished converting from address to lat-lng(Geocode job).
-	 * 
+	 * Finished converting from address to latlng(Geocode job). Directly to find
+	 * near-by by input.
 	 * **/
 	@Subscribe
 	public void onDOGeocodeSuccess(DOGeocodeFromAddress _geocode) {
@@ -160,13 +187,21 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 					DOLatLng location = geometry.getLocation();
 					double lat = location.getLatitude();
 					double lng = location.getLongitude();
-					String url = String.format(App.API_NEAR_BY, lat, lng, Prefs.getInstance().getRadius(), Locale
-							.getDefault().getLanguage());
-					LL.d("Start place near-by:" + url);
-					new GsonRequestTask<DONearBy>(ctx, Request.Method.GET, url, DONearBy.class).execute();
+					findNearByPlaces(ctx, lat, lng);
 				}
 			}
 		}
+	}
+
+
+	/**
+	 * Find the list of near-by which could be mocked late.
+	 */
+	private void findNearByPlaces(Context _ctx, double _lat, double _lng) {
+		String url = String.format(App.API_NEAR_BY, _lat, _lng, Prefs.getInstance().getRadius(), Locale.getDefault()
+				.getLanguage());
+		LL.d("Start place near-by:" + url);
+		new GsonRequestTask<DONearBy>(_ctx, Request.Method.GET, url, DONearBy.class).execute();
 	}
 
 
@@ -186,7 +221,7 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 
 
 	/**
-	 * UI is ready showing near-by places, and we push data onto it.ç
+	 * UI is ready showing near-by places, and we push data onto it.
 	 * 
 	 * **/
 	@Subscribe
@@ -196,44 +231,84 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 
 
 	/**
-	 * Get translated string of Geocode from latlng.
+	 * Get translated string of Geocode from latlng, it is the handler for
+	 * location tracking of clicking radar on actionbar. Don't do search of
+	 * near-by.
 	 * **/
 	@Subscribe
 	public void onDOGeocodeSuccess(DOGeocodeFromLatLng _geocode) {
 		if (_geocode != null) {
 			DOGeocodeResult[] results = _geocode.getGeocodeResults();
 			if (results != null && results.length > 0) {
-				DOGeocodeResult result = results[0];
-				DOGeometry geometry = result.getGeometry();
-				GeocodeUtil.GeocodedAddress geocodedAddress = GeocodeUtil.fromGeocodeResult(result);
-				View view = getView();
-				if (view != null && geocodedAddress != null) {
-					EditText street = (EditText) view.findViewById(R.id.et_mocked_street_name);
-					EditText city = (EditText) view.findViewById(R.id.et_mocked_city_name);
-					EditText country = (EditText) view.findViewById(R.id.et_mocked_county_name);
-					street.setText(geocodedAddress.getStreet());
-					city.setText(geocodedAddress.getCity());
-					country.setText(geocodedAddress.getCountry());
-					if (geometry != null && geometry.getLocation() != null) {
-						DOLatLng latLng = geometry.getLocation();
-						TextView lanlng = (TextView) view.findViewById(R.id.tv_mocked_lanlng);
-						lanlng.setText(latLng.getLatitude() + "," + latLng.getLongitude());
-					}
+				fillLocationList(results[0]);
+			}
+		}
+	}
+
+
+	/**
+	 * Get translated string of Geocode from latlng, it is the handler for
+	 * checking voice input, see @link{searchVoicePlace}. To find near-by after
+	 * voice input.
+	 * **/
+	@Subscribe
+	public void onDOGeocodeSuccess(DOGecodeFromVoiceAddress _geocode) {
+		if (_geocode != null) {
+			DOGeocodeResult[] results = _geocode.getGeocodeResults();
+			if (results != null && results.length > 0) {
+				DOLatLng latLng = fillLocationList(results[0]);
+				if (latLng != null) {
+					findNearByPlaces(getActivity().getApplicationContext(), latLng.getLatitude(), latLng.getLongitude());
 				}
 			}
 		}
 	}
 
 
+	/**
+	 * Fill in all location information onto street, city, country....
+	 * Radar-search and voice input need this to translate and validate.
+	 * 
+	 * @return a lat and lng
+	 * */
+	private DOLatLng fillLocationList(DOGeocodeResult _result) {
+		DOGeocodeResult result = _result;
+		DOGeometry geometry = result.getGeometry();
+		GeocodeUtil.GeocodedAddress geocodedAddress = GeocodeUtil.fromGeocodeResult(result);
+		View view = getView();
+		if (view != null) {
+			if (geocodedAddress != null) {
+				EditText street = (EditText) view.findViewById(R.id.et_mocked_street_name);
+				EditText city = (EditText) view.findViewById(R.id.et_mocked_city_name);
+				EditText country = (EditText) view.findViewById(R.id.et_mocked_county_name);
+				street.setText(geocodedAddress.getStreet());
+				city.setText(geocodedAddress.getCity());
+				country.setText(geocodedAddress.getCountry());
+			}
+			if (geometry != null && geometry.getLocation() != null) {
+				DOLatLng latLng = geometry.getLocation();
+				/*
+				 * This textview of latlng is for debug
+				 */
+				if (BuildConfig.DEBUG) {
+					TextView tvlatlng = (TextView) view.findViewById(R.id.tv_mocked_lanlng);
+					tvlatlng.setText(latLng.getLatitude() + "," + latLng.getLongitude());
+					tvlatlng.setVisibility(View.VISIBLE);
+				}
+				return latLng;
+			}
+		}
+		return null;
+	}
+
+
 	@Override
 	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-		clearHiddenLatLng();
 	}
 
 
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
-		clearHiddenLatLng();
 	}
 
 
@@ -243,6 +318,9 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 	}
 
 
+	/**
+	 * Help method that clear latlng in debug-box.
+	 */
 	private void clearHiddenLatLng() {
 		View view = getView();
 		if (view != null) {

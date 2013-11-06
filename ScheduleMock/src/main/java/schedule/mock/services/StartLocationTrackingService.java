@@ -55,9 +55,10 @@ public final class StartLocationTrackingService extends Service implements Googl
 		Location l = mLocationClient.getLastLocation();
 		if (l != null) {
 			BusProvider.getBus().post(new ServiceLocationChangedEvent(l));
-			LL.d("startTracking -> onLocationChanged");
+			LL.d("startTracking -> find current location.");
 		} else {
 			try {
+				LL.d("startTracking -> searching new.");
 				LocationRequest req = LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
 						.setInterval(LOCATION_SEARCH_INTERVAL).setFastestInterval(LOCATION_SEARCH_FASTEST_INTERVAL);
 				mLocationClient.requestLocationUpdates(req, this);

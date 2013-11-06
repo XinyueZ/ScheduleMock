@@ -20,13 +20,12 @@
 			android:layout_height="match_parent"
 			android:layout_width="match_parent">
 
-		<schedule.mock.views.AnimiImageView
+		<ImageView
 				android:id="@+id/btn_voice_input"
 				android:layout_centerInParent="true"
-				android:src="@drawable/anim_voice_input"
+				android:src="@drawable/ic_grey_voice"
 				android:background="@android:color/transparent"
 				android:layout_height="150dp"
-				android:visibility="gone"
 				android:layout_width="150dp"/>
 	</RelativeLayout>
 
