@@ -130,7 +130,7 @@ public final class MainActivity extends BaseActivity implements
 
 
 	/**
-	 * Has gotten the freshst location from trackings-services.
+	 * Has gotten the newest location from trackings-services.
 	 * **/
 	@Subscribe
 	public void onServiceLocationChanged(ServiceLocationChangedEvent _e) {
