@@ -1,23 +1,5 @@
 package schedule.mock.fragments;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.speech.RecognizerIntent;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.android.volley.Request;
-import com.squareup.otto.Subscribe;
-
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -40,6 +22,23 @@ import schedule.mock.utils.BusProvider;
 import schedule.mock.utils.GeocodeUtil;
 import schedule.mock.utils.LL;
 import schedule.mock.utils.Utils;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.speech.RecognizerIntent;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.squareup.otto.Subscribe;
 
 
 public final class InputFragment extends BaseFragment implements View.OnClickListener, TextWatcher {
@@ -184,9 +183,10 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 				DOGeocodeResult result = results[0];
 				DOGeometry geometry = result.getGeometry();
 				if (geometry != null && geometry.getLocation() != null) {
-					DOLatLng location = geometry.getLocation();
-					double lat = location.getLatitude();
-					double lng = location.getLongitude();
+					DOLatLng latlng = geometry.getLocation();
+					double lat = latlng.getLatitude();
+					double lng = latlng.getLongitude();
+					showDebugLatLng(latlng);
 					findNearByPlaces(ctx, lat, lng);
 				}
 			}
@@ -287,18 +287,29 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 			}
 			if (geometry != null && geometry.getLocation() != null) {
 				DOLatLng latLng = geometry.getLocation();
-				/*
-				 * This textview of latlng is for debug
-				 */
-				if (BuildConfig.DEBUG) {
-					TextView tvlatlng = (TextView) view.findViewById(R.id.tv_mocked_lanlng);
-					tvlatlng.setText(latLng.getLatitude() + "," + latLng.getLongitude());
-					tvlatlng.setVisibility(View.VISIBLE);
-				}
+				showDebugLatLng(latLng);
 				return latLng;
 			}
 		}
 		return null;
+	}
+
+
+	/**
+	 * Show debug info(latlng) on textview.
+	 * 
+	 * @param _latLng
+	 * @param _view
+	 */
+	private void showDebugLatLng(DOLatLng _latLng) {
+		View view = getView();
+		if (view != null) {
+			if (BuildConfig.DEBUG) {
+				TextView latlng = (TextView) view.findViewById(R.id.tv_mocked_lanlng);
+				latlng.setText(_latLng.getLatitude() + "," + _latLng.getLongitude());
+				latlng.setVisibility(View.VISIBLE);
+			}
+		}
 	}
 
 
