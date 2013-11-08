@@ -1,6 +1,7 @@
 package schedule.mock.activities;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -18,6 +19,7 @@ import schedule.mock.R;
 import schedule.mock.data.DOGeocodeFromLatLng;
 import schedule.mock.data.DOGeocodeResult;
 import schedule.mock.events.ServiceLocationChangedEvent;
+import schedule.mock.events.SetMockLocationEvent;
 import schedule.mock.events.StartLocationTrackingEvent;
 import schedule.mock.events.StopLocationTrackingEvent;
 import schedule.mock.events.UIShowLoadingCompleteEvent;
@@ -121,18 +123,19 @@ public final class MainActivity extends BaseActivity implements
 	}
 
 	/**
-	 * Clicking on the address of actionbar and open the static to show position of user.
+	 * Clicking on the address of actionbar and open the static to show position
+	 * of user.
+	 * 
 	 * @param _v
 	 */
 	private void openCurrentPositionInMap(View _v) {
 		DOGeocodeResult latLng = (DOGeocodeResult) _v.getTag();
 		DisplayMetrics displayMetrics = DisplayUtil.getDisplayMetrics(getApplicationContext());
 		BusProvider.getBus().post(
-				new UIShowNetworkImageEvent(String.format(App.API_STATIC_MAP, latLng.getGeometry()
-						.getLocation().getLatitude(), latLng.getGeometry().getLocation().getLongitude(),
-						displayMetrics.widthPixels + "x" + displayMetrics.heightPixels, "17", "A", latLng
-								.getGeometry().getLocation().getLatitude(), latLng.getGeometry().getLocation()
-								.getLongitude())));
+				new UIShowNetworkImageEvent(String.format(App.API_STATIC_MAP, latLng.getGeometry().getLocation()
+						.getLatitude(), latLng.getGeometry().getLocation().getLongitude(), displayMetrics.widthPixels
+						+ "x" + displayMetrics.heightPixels, "17", "A", latLng.getGeometry().getLocation()
+						.getLatitude(), latLng.getGeometry().getLocation().getLongitude())));
 	}
 
 	@Subscribe
@@ -188,9 +191,16 @@ public final class MainActivity extends BaseActivity implements
 		}
 	}
 
+	@Subscribe
+	public void onShowNetworkImage(UIShowNetworkImageEvent _e) {
+		ImageDialogFragment.showInstance(this, _e.getURL());
+	}
 
 	@Subscribe
-	public void onShowNetworkImage( UIShowNetworkImageEvent _e) {
-		ImageDialogFragment.showInstance(this, _e.getURL());
+	public void onSetMockLocation(SetMockLocationEvent _e) {
+		Location location = _e.getLocation();
+		if (location != null) {
+
+		}
 	}
 }
