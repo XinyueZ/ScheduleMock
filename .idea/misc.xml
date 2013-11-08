@@ -5,7 +5,7 @@
     <option name="formatter" value="ECLIPSE" />
     <option name="id" value="1377026244574" />
     <option name="name" value="default" />
-    <option name="pathToConfigFileJava" value="$PROJECT_DIR$/../../cellular.xml" />
+    <option name="pathToConfigFileJava" value="$PROJECT_DIR$/../../Dropbox/eclipse/formatter.xml" />
     <option name="selectedJavaProfile" value="Cellular" />
   </component>
   <component name="EntryPointsManager">

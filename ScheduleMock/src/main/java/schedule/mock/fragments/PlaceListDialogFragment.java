@@ -14,7 +14,6 @@ import com.squareup.otto.Subscribe;
 import schedule.mock.R;
 import schedule.mock.adapters.PlaceListAdapter;
 import schedule.mock.events.UIPlaceListIsReadyEvent;
-import schedule.mock.events.UIShowNetworkImageEvent;
 import schedule.mock.events.UIShowPlaceListEvent;
 import schedule.mock.utils.BusProvider;
 
@@ -65,8 +64,4 @@ public final class PlaceListDialogFragment extends BaseDialogFragment implements
 		dismiss();
 	}
 
-	@Subscribe
-	public void onShowNetworkImage( UIShowNetworkImageEvent _e) {
-		ImageDialogFragment.showInstance(getActivity(), _e.getURL());
-	}
 }

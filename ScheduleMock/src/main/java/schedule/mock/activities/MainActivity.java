@@ -2,6 +2,7 @@ package schedule.mock.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,21 +22,23 @@ import schedule.mock.events.StartLocationTrackingEvent;
 import schedule.mock.events.StopLocationTrackingEvent;
 import schedule.mock.events.UIShowLoadingCompleteEvent;
 import schedule.mock.events.UIShowLoadingEvent;
+import schedule.mock.events.UIShowNetworkImageEvent;
 import schedule.mock.fragments.HomeFragment;
+import schedule.mock.fragments.ImageDialogFragment;
 import schedule.mock.services.StartLocationTrackingService;
 import schedule.mock.tasks.net.GsonRequestTask;
+import schedule.mock.utils.BusProvider;
+import schedule.mock.utils.DisplayUtil;
 import schedule.mock.utils.LL;
 import schedule.mock.utils.Utils;
 import schedule.mock.views.AnimiImageView;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshAttacher;
-
 
 public final class MainActivity extends BaseActivity implements
 		uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefreshListener, View.OnClickListener {
 
 	public static final int LAYOUT = R.layout.activity_main;
 	private PullToRefreshAttacher mPullToRefreshAttacher;
-
 
 	@Override
 	protected void onCreate(Bundle _savedInstanceState) {
@@ -52,13 +55,11 @@ public final class MainActivity extends BaseActivity implements
 		btnLocationTracking.setOnClickListener(this);
 	}
 
-
 	@Override
 	protected void onDestroy() {
 		mPullToRefreshAttacher = null;
 		super.onDestroy();
 	}
-
 
 	@Subscribe
 	public void onUIShowLoadingEvent(UIShowLoadingEvent _event) {
@@ -67,14 +68,12 @@ public final class MainActivity extends BaseActivity implements
 		}
 	}
 
-
 	@Subscribe
 	public void onUIShowLoadingCompleteEvent(UIShowLoadingCompleteEvent _event) {
 		if (mPullToRefreshAttacher != null) {
 			mPullToRefreshAttacher.setRefreshComplete();
 		}
 	}
-
 
 	public void setRefreshableView(
 			uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefreshListener _refreshListener) {
@@ -84,7 +83,6 @@ public final class MainActivity extends BaseActivity implements
 		}
 	}
 
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu _menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -92,42 +90,60 @@ public final class MainActivity extends BaseActivity implements
 		return true;
 	}
 
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem _item) {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		switch (_item.getItemId()) {
-			case R.id.action_settings:
-				return true;
+		case R.id.action_settings:
+			return true;
 		}
 		return super.onOptionsItemSelected(_item);
 	}
-
 
 	@Override
 	public void onRefreshStarted(View _view) {
 	}
 
-
 	@Override
 	public void onClick(View _v) {
-		((AnimiImageView) _v).toggle();
+		switch (_v.getId()) {
+		case R.id.tv_current_location:
+			if (_v.getTag() instanceof DOGeocodeResult) {
+				openCurrentPositionInMap(_v);
+			}
+			break;
+		default:
+			((AnimiImageView) _v).toggle();
+			break;
+		}
 	}
 
+	/**
+	 * Clicking on the address of actionbar and open the static to show position of user.
+	 * @param _v
+	 */
+	private void openCurrentPositionInMap(View _v) {
+		DOGeocodeResult latLng = (DOGeocodeResult) _v.getTag();
+		DisplayMetrics displayMetrics = DisplayUtil.getDisplayMetrics(getApplicationContext());
+		BusProvider.getBus().post(
+				new UIShowNetworkImageEvent(String.format(App.API_STATIC_MAP, latLng.getGeometry()
+						.getLocation().getLatitude(), latLng.getGeometry().getLocation().getLongitude(),
+						displayMetrics.widthPixels + "x" + displayMetrics.heightPixels, "17", "A", latLng
+								.getGeometry().getLocation().getLatitude(), latLng.getGeometry().getLocation()
+								.getLongitude())));
+	}
 
 	@Subscribe
 	public void onStartLocationTracking(StartLocationTrackingEvent _e) {
 		startService(new Intent(getApplicationContext(), StartLocationTrackingService.class));
 	}
 
-
 	@Subscribe
 	public void onStopLocationTracking(StopLocationTrackingEvent _e) {
 		stopService(new Intent(getApplicationContext(), StartLocationTrackingService.class));
 	}
-
 
 	/**
 	 * Has gotten the newest location from trackings-services.
@@ -145,7 +161,6 @@ public final class MainActivity extends BaseActivity implements
 		new GsonRequestTask<DOGeocodeFromLatLng>(getApplicationContext(), Request.Method.GET, url.trim(),
 				DOGeocodeFromLatLng.class).execute();
 	}
-
 
 	/**
 	 * Get translated string of Geocode from latlng.
@@ -166,7 +181,16 @@ public final class MainActivity extends BaseActivity implements
 				AnimiImageView btnLocationTracking = (AnimiImageView) customView
 						.findViewById(R.id.btn_location_tracking);
 				btnLocationTracking.stopAnim();
+
+				currentLoction.setTag(result);
+				currentLoction.setOnClickListener(this);
 			}
 		}
+	}
+
+
+	@Subscribe
+	public void onShowNetworkImage( UIShowNetworkImageEvent _e) {
+		ImageDialogFragment.showInstance(this, _e.getURL());
 	}
 }

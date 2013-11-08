@@ -23,6 +23,11 @@ public final class ImageDialogFragment extends BaseDialogFragment {
 	private static final String KEY_URL = "url";
 
 
+	/**
+	 * Show a dialog fragment instance with image url.
+	 * @param _context
+	 * @param _url
+	 */
 	public static void showInstance(FragmentActivity _context, String _url) {
 		Bundle args = new Bundle();
 		args.putString(KEY_URL, _url);
