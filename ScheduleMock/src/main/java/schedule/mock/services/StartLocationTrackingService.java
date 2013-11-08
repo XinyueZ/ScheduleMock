@@ -18,19 +18,28 @@ import schedule.mock.utils.LL;
 
 public final class StartLocationTrackingService extends Service implements GooglePlayServicesClient.ConnectionCallbacks,
 		GooglePlayServicesClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
-
+	public static final String EXTRAS_MOCK_MODE = "extras_mock_mode";
+	public static final String EXTRAS_MOCK_LAT = "extras_mock_lat";
+	public static final String EXTRAS_MOCK_LNG = "extras_mock_lng";
 	static final int LOCATION_SEARCH_FASTEST_INTERVAL = 3000;
 	static final int LOCATION_SEARCH_INTERVAL = 5000;
 	private LocationClient mLocationClient;
-
+	private boolean mMockMode;
+	private Location mMockLocation;
 
 	@Override
-	public void onCreate() {
-		super.onCreate();
+	public int onStartCommand(Intent _intent, int _flags, int _startId) {
+		mMockMode = _intent.getBooleanExtra(EXTRAS_MOCK_MODE, false);
+		if(mMockMode) {
+			mMockLocation =  new Location("mock_provider");
+			mMockLocation.setLatitude(_intent.getDoubleExtra(EXTRAS_MOCK_LAT, 51.4521));
+			mMockLocation.setLongitude(_intent.getDoubleExtra(EXTRAS_MOCK_LNG, 7.0038));
+		}
 		mLocationClient = new LocationClient(this, this, this);
 		mLocationClient.connect();
-	}
 
+		return super.onStartCommand(_intent, _flags, _startId);
+	}
 
 	@Override
 	public void onDestroy() {
@@ -47,6 +56,12 @@ public final class StartLocationTrackingService extends Service implements Googl
 
 	@Override
 	public void onConnected(Bundle _bundle) {
+		if(mMockMode) {
+			mLocationClient.setMockMode(true);
+			mMockLocation.setAccuracy(50);
+			mMockLocation.setTime(10000);
+			mLocationClient.setMockLocation(mMockLocation);
+		}
 		startTracking();
 	}
 

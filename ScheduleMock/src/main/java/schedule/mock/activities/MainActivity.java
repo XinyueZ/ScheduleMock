@@ -1,7 +1,6 @@
 package schedule.mock.activities;
 
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -18,6 +17,7 @@ import schedule.mock.App;
 import schedule.mock.R;
 import schedule.mock.data.DOGeocodeFromLatLng;
 import schedule.mock.data.DOGeocodeResult;
+import schedule.mock.data.DOLatLng;
 import schedule.mock.events.ServiceLocationChangedEvent;
 import schedule.mock.events.SetMockLocationEvent;
 import schedule.mock.events.StartLocationTrackingEvent;
@@ -198,9 +198,13 @@ public final class MainActivity extends BaseActivity implements
 
 	@Subscribe
 	public void onSetMockLocation(SetMockLocationEvent _e) {
-		Location location = _e.getLocation();
+		DOLatLng location = _e.getLocation();
 		if (location != null) {
-
+			Intent intent = new Intent(getApplicationContext(), StartLocationTrackingService.class);
+			intent.putExtra(StartLocationTrackingService.EXTRAS_MOCK_MODE, true);
+			intent.putExtra(StartLocationTrackingService.EXTRAS_MOCK_LAT, 51.4521);
+			intent.putExtra(StartLocationTrackingService.EXTRAS_MOCK_LNG, 7.0038);
+			startService(intent);
 		}
 	}
 }

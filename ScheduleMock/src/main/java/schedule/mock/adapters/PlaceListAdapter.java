@@ -12,6 +12,8 @@ import com.android.volley.toolbox.NetworkImageView;
 import schedule.mock.App;
 import schedule.mock.R;
 import schedule.mock.data.DONearByResult;
+import schedule.mock.events.SetMockLocationEvent;
+import schedule.mock.events.UIClosePlaceListDialogFragmentEvent;
 import schedule.mock.events.UIShowNetworkImageEvent;
 import schedule.mock.tasks.net.TaskHelper;
 import schedule.mock.utils.BusProvider;
@@ -66,6 +68,7 @@ public final class PlaceListAdapter extends BaseAdapter {
 		}
 		holder.PlaceIcon.setImageUrl(nearByResult.getIcon(), TaskHelper.getImageLoader());
 		holder.PlaceName.setText(nearByResult.getName());
+
 		try {
 			String url = String.format(App.API_STATIC_MAP,
 					nearByResult.getGeometry().getLocation().getLatitude(), nearByResult.getGeometry()
@@ -99,6 +102,13 @@ public final class PlaceListAdapter extends BaseAdapter {
 		} catch (NullPointerException e2) {
 			holder.Geolocation.setVisibility(View.GONE);
 		}
+		_convertView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View _v) {
+				BusProvider.getBus().post(new SetMockLocationEvent(nearByResult.getGeometry().getLocation()));
+				BusProvider.getBus().post(new UIClosePlaceListDialogFragmentEvent());
+			}
+		});
 		return _convertView;
 	}
 
