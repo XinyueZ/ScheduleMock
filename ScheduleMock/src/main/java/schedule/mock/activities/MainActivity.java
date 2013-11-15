@@ -25,6 +25,7 @@ import schedule.mock.events.StopLocationTrackingEvent;
 import schedule.mock.events.UIShowLoadingCompleteEvent;
 import schedule.mock.events.UIShowLoadingEvent;
 import schedule.mock.events.UIShowNetworkImageEvent;
+import schedule.mock.events.UIShowOpenMockPermissionEvent;
 import schedule.mock.fragments.HomeFragment;
 import schedule.mock.fragments.ImageDialogFragment;
 import schedule.mock.services.StartLocationTrackingService;
@@ -138,11 +139,21 @@ public final class MainActivity extends BaseActivity implements
 						.getLatitude(), latLng.getGeometry().getLocation().getLongitude())));
 	}
 
+	/**
+	 * Start tracking location manuel
+	 * 
+	 * @param _e
+	 */
 	@Subscribe
 	public void onStartLocationTracking(StartLocationTrackingEvent _e) {
 		startService(new Intent(getApplicationContext(), StartLocationTrackingService.class));
 	}
 
+	/**
+	 * Stop tracking location manuel
+	 * 
+	 * @param _e
+	 */
 	@Subscribe
 	public void onStopLocationTracking(StopLocationTrackingEvent _e) {
 		stopService(new Intent(getApplicationContext(), StartLocationTrackingService.class));
@@ -163,6 +174,14 @@ public final class MainActivity extends BaseActivity implements
 		 */
 		new GsonRequestTask<DOGeocodeFromLatLng>(getApplicationContext(), Request.Method.GET, url.trim(),
 				DOGeocodeFromLatLng.class).execute();
+
+		/*
+		 * Stop tracking if it is not a mocked location, that means the normal
+		 * tracking should be stopped when a location has been gotten.
+		 */
+		if( !_e.isMocked() ) {
+			stopService(new Intent(getApplicationContext(), StartLocationTrackingService.class));
+		}
 	}
 
 	/**
@@ -206,5 +225,10 @@ public final class MainActivity extends BaseActivity implements
 			intent.putExtra(StartLocationTrackingService.EXTRAS_MOCK_LNG, 7.0038);
 			startService(intent);
 		}
+	}
+
+	@Subscribe
+	public void onShowOpenMockPermission(UIShowOpenMockPermissionEvent _e) {
+
 	}
 }

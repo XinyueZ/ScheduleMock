@@ -6,7 +6,7 @@ import com.squareup.otto.ThreadEnforcer;
 
 public final class BusProvider {
 
-	private static volatile Bus sBus = new Bus(ThreadEnforcer.MAIN);
+	private static volatile Bus sBus = new Bus(ThreadEnforcer.ANY);
 
 
 	public static Bus getBus() {
