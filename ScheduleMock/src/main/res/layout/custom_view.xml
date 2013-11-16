@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -14,7 +15,7 @@
 			android:lines="1"
 			android:gravity="center_vertical"
 			android:hint="@string/hint_current_location"
-			android:layout_toLeftOf="@+id/btn_location_tracking"
+			android:layout_toLeftOf="@+id/switch_mock"
 			android:layout_centerVertical="true"
 			android:focusable="true"
 			android:focusableInTouchMode="true"
@@ -22,13 +23,16 @@
 			android:marqueeRepeatLimit="marquee_forever"
 			android:layout_width="match_parent"/>
 
-	<schedule.mock.views.AnimiImageView
-			android:id="@+id/btn_location_tracking"
-			android:layout_centerInParent="true"
-			android:layout_centerVertical="true"
-			android:src="@drawable/anim_radar"
+
+
+	<de.ankri.views.Switch
+			android:id="@+id/switch_mock"
 			android:layout_alignParentRight="true"
-			android:background="@android:color/transparent"
+			android:layout_width="match_parent"
+			android:layout_centerVertical="true"
 			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"/>
+			style="@style/SwitchCompat"
+			app:textOff="@string/general_on"
+			android:visibility="gone"
+			app:textOn="@string/general_off"/>
 </RelativeLayout>

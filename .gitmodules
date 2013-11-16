@@ -1,3 +1,6 @@
 [submodule "submodules/volley"]
 	path = submodules/volley
 	url = https://android.googlesource.com/platform/frameworks/volley
+[submodule "submodules/SwitchCompatLibrary"]
+	path = submodules/SwitchCompatLibrary
+	url = https://github.com/ankri/SwitchCompatLibrary.git

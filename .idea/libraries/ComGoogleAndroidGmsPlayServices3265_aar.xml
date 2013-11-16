@@ -2,7 +2,6 @@
   <library name="ComGoogleAndroidGmsPlayServices3265.aar">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/ScheduleMock/build/exploded-bundles/ComGoogleAndroidGmsPlayServices3265.aar/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/ScheduleMock/build/exploded-bundles/ComGoogleAndroidGmsPlayServices3265.aar/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

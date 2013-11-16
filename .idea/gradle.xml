@@ -9,6 +9,12 @@
       </GradleProjectSettings>
       <GradleProjectSettings>
         <option name="distributionType" value="LOCAL" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/submodules/SwitchCompatLibrary/SwitchCompatLibrary" />
+        <option name="gradleHome" value="/Applications/gradle-1.8" />
+        <option name="useAutoImport" value="true" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/submodules/volley" />
         <option name="gradleHome" value="/Applications/gradle-1.8" />
         <option name="useAutoImport" value="true" />

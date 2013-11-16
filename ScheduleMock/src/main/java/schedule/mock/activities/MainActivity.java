@@ -1,7 +1,9 @@
 package schedule.mock.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,26 +15,26 @@ import com.squareup.otto.Subscribe;
 
 import java.util.Locale;
 
+import de.ankri.views.Switch;
 import schedule.mock.App;
 import schedule.mock.R;
 import schedule.mock.data.DOGeocodeFromLatLng;
 import schedule.mock.data.DOGeocodeResult;
 import schedule.mock.data.DOLatLng;
 import schedule.mock.events.ServiceLocationChangedEvent;
-import schedule.mock.events.SetMockLocationEvent;
-import schedule.mock.events.StartLocationTrackingEvent;
-import schedule.mock.events.StopLocationTrackingEvent;
+import schedule.mock.events.StartLocationMockTrackingEvent;
+import schedule.mock.events.UIShowAfterFinishMockingEvent;
 import schedule.mock.events.UIShowLoadingCompleteEvent;
 import schedule.mock.events.UIShowLoadingEvent;
 import schedule.mock.events.UIShowNetworkImageEvent;
 import schedule.mock.events.UIShowOpenMockPermissionEvent;
 import schedule.mock.fragments.HomeFragment;
 import schedule.mock.fragments.ImageDialogFragment;
+import schedule.mock.prefs.Prefs;
 import schedule.mock.services.StartLocationTrackingService;
 import schedule.mock.tasks.net.GsonRequestTask;
 import schedule.mock.utils.BusProvider;
 import schedule.mock.utils.DisplayUtil;
-import schedule.mock.utils.LL;
 import schedule.mock.utils.Utils;
 import schedule.mock.views.AnimiImageView;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshAttacher;
@@ -42,6 +44,8 @@ public final class MainActivity extends BaseActivity implements
 
 	public static final int LAYOUT = R.layout.activity_main;
 	private PullToRefreshAttacher mPullToRefreshAttacher;
+	private boolean mLocationInProcess;
+	private ProgressDialog mProgressDialog;
 
 	@Override
 	protected void onCreate(Bundle _savedInstanceState) {
@@ -53,9 +57,20 @@ public final class MainActivity extends BaseActivity implements
 			getSupportFragmentManager().beginTransaction()
 					.add(App.MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext())).commit();
 		}
+		initActionBar();
+	}
+
+	private void initActionBar() {
+		boolean currentMockStatus = Prefs.getInstance().getMockStatus();
+
 		View customView = getSupportActionBar().getCustomView();
-		View btnLocationTracking = customView.findViewById(R.id.btn_location_tracking);
-		btnLocationTracking.setOnClickListener(this);
+		Switch aSwitch = (Switch) customView.findViewById(R.id.switch_mock);
+		aSwitch.setOnClickListener(this);
+		/* Show switch to "off" mock status is possible. */
+		if (currentMockStatus) {
+			aSwitch.setChecked(true);
+			aSwitch.setVisibility(View.VISIBLE);
+		}
 	}
 
 	@Override
@@ -95,14 +110,23 @@ public final class MainActivity extends BaseActivity implements
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem _item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
 		switch (_item.getItemId()) {
-		case R.id.action_settings:
+		case R.id.menu_my_location:
+			startLocationProcess(new Intent(getApplicationContext(), StartLocationTrackingService.class));
 			return true;
 		}
 		return super.onOptionsItemSelected(_item);
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu _menu) {
+		MenuItem tracking = _menu.findItem(R.id.menu_my_location);
+		if( mLocationInProcess ) {
+			tracking.setEnabled(false);
+		} else {
+			tracking.setEnabled(true);
+		}
+		return super.onPrepareOptionsMenu(_menu);
 	}
 
 	@Override
@@ -113,8 +137,17 @@ public final class MainActivity extends BaseActivity implements
 	public void onClick(View _v) {
 		switch (_v.getId()) {
 		case R.id.tv_current_location:
+			/* Click on address on the actionbar. */
 			if (_v.getTag() instanceof DOGeocodeResult) {
 				openCurrentPositionInMap(_v);
+			}
+			break;
+		case R.id.switch_mock:
+			/* Click on switch to "off" mock status. */
+			de.ankri.views.Switch aSwitch = (Switch) _v;
+			if (!aSwitch.isChecked()) {
+				/* Stop location system */
+				stopLocationProcess();
 			}
 			break;
 		default:
@@ -122,6 +155,7 @@ public final class MainActivity extends BaseActivity implements
 			break;
 		}
 	}
+
 
 	/**
 	 * Clicking on the address of actionbar and open the static to show position
@@ -140,26 +174,6 @@ public final class MainActivity extends BaseActivity implements
 	}
 
 	/**
-	 * Start tracking location manuel
-	 * 
-	 * @param _e
-	 */
-	@Subscribe
-	public void onStartLocationTracking(StartLocationTrackingEvent _e) {
-		startService(new Intent(getApplicationContext(), StartLocationTrackingService.class));
-	}
-
-	/**
-	 * Stop tracking location manuel
-	 * 
-	 * @param _e
-	 */
-	@Subscribe
-	public void onStopLocationTracking(StopLocationTrackingEvent _e) {
-		stopService(new Intent(getApplicationContext(), StartLocationTrackingService.class));
-	}
-
-	/**
 	 * Has gotten the newest location from trackings-services.
 	 * **/
 	@Subscribe
@@ -168,7 +182,6 @@ public final class MainActivity extends BaseActivity implements
 		double lng = _e.getLocation().getLongitude();
 		String url = String.format(App.API_GEOCODE_FROM_LAT_LNG, Utils.encodedKeywords(lat + "," + lng), Locale
 				.getDefault().getLanguage());
-		LL.d("Start geocode:" + url);
 		/*
 		 * Translate from latlng to string.
 		 */
@@ -179,9 +192,29 @@ public final class MainActivity extends BaseActivity implements
 		 * Stop tracking if it is not a mocked location, that means the normal
 		 * tracking should be stopped when a location has been gotten.
 		 */
-		if( !_e.isMocked() ) {
-			stopService(new Intent(getApplicationContext(), StartLocationTrackingService.class));
+		if (!_e.isMocked()) {
+			stopLocationProcess();
+		} else {
+			onUIShowAfterStartMocking();
+
 		}
+	}
+
+	/***
+	 * Starting mocking, show switch and dismiss radar.
+	 */
+	private void onUIShowAfterStartMocking() {
+		/*
+		 * Switch to UI for mocking "ON"
+		 * 
+		 * Against to onUIShowAfterFinishMocking
+		 */
+		ActionBar actionBar = getSupportActionBar();
+		View customView = actionBar.getCustomView();
+		Switch aSwitch = (Switch) customView.findViewById(R.id.switch_mock);
+		aSwitch.setVisibility(View.VISIBLE);
+		aSwitch.setChecked(true);
+		finish();
 	}
 
 	/**
@@ -197,13 +230,8 @@ public final class MainActivity extends BaseActivity implements
 				DOGeocodeResult result = results[0];
 				String fullAddress = result.getFullAddress();
 				currentLoction.setText(fullAddress);
-				/*
-				 * Stop tracking current address.
-				 */
-				AnimiImageView btnLocationTracking = (AnimiImageView) customView
-						.findViewById(R.id.btn_location_tracking);
-				btnLocationTracking.stopAnim();
 
+				/* Store current location to address text-view. */
 				currentLoction.setTag(result);
 				currentLoction.setOnClickListener(this);
 			}
@@ -216,15 +244,49 @@ public final class MainActivity extends BaseActivity implements
 	}
 
 	@Subscribe
-	public void onSetMockLocation(SetMockLocationEvent _e) {
+	public void onStartLocationMockTracking(StartLocationMockTrackingEvent _e) {
 		DOLatLng location = _e.getLocation();
+		String name = _e.getName();
 		if (location != null) {
 			Intent intent = new Intent(getApplicationContext(), StartLocationTrackingService.class);
 			intent.putExtra(StartLocationTrackingService.EXTRAS_MOCK_MODE, true);
-			intent.putExtra(StartLocationTrackingService.EXTRAS_MOCK_LAT, 51.4521);
-			intent.putExtra(StartLocationTrackingService.EXTRAS_MOCK_LNG, 7.0038);
-			startService(intent);
+			intent.putExtra(StartLocationTrackingService.EXTRAS_MOCK_LAT, location.getLatitude());
+			intent.putExtra(StartLocationTrackingService.EXTRAS_MOCK_LNG, location.getLongitude());
+			intent.putExtra(StartLocationTrackingService.EXTRAS_MOCK_NAME, name);
+			startLocationProcess(intent);
 		}
+	}
+
+	/***
+	 * Start location tracking or mocking
+	 * @param _intent
+	 */
+	private void startLocationProcess(Intent _intent) {
+		startService(_intent);
+		mLocationInProcess = true;
+		mProgressDialog = ProgressDialog.show(this, null, getString(R.string.popup_my_location));
+	}
+
+	/***
+	 * Stop location tracking or mocking
+	 */
+	private void stopLocationProcess() {
+		stopService(new Intent(getApplicationContext(), StartLocationTrackingService.class));
+		mLocationInProcess = false;
+		if( mProgressDialog != null && mProgressDialog.isShowing()) {
+			mProgressDialog.dismiss();
+		}
+	}
+
+	@Subscribe
+	public void onUIShowAfterFinishMocking(UIShowAfterFinishMockingEvent _e) {
+		View customView = getSupportActionBar().getCustomView();
+		Switch aSwitch = (Switch) customView.findViewById(R.id.switch_mock);
+		/*
+		 * A bug on AnimiImageView, first set no listener then show, stop anim
+		 * and connect callback again.
+		 */
+		aSwitch.setVisibility(View.GONE);
 	}
 
 	@Subscribe

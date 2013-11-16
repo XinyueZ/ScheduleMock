@@ -12,7 +12,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import schedule.mock.App;
 import schedule.mock.R;
 import schedule.mock.data.DONearByResult;
-import schedule.mock.events.SetMockLocationEvent;
+import schedule.mock.events.StartLocationMockTrackingEvent;
 import schedule.mock.events.UIClosePlaceListDialogFragmentEvent;
 import schedule.mock.events.UIShowNetworkImageEvent;
 import schedule.mock.tasks.net.TaskHelper;
@@ -105,7 +105,7 @@ public final class PlaceListAdapter extends BaseAdapter {
 		_convertView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View _v) {
-				BusProvider.getBus().post(new SetMockLocationEvent(nearByResult.getGeometry().getLocation()));
+				BusProvider.getBus().post(new StartLocationMockTrackingEvent(nearByResult.getName(), nearByResult.getGeometry().getLocation()));
 				BusProvider.getBus().post(new UIClosePlaceListDialogFragmentEvent());
 			}
 		});
