@@ -24,6 +24,7 @@ import schedule.mock.R;
 import schedule.mock.activities.MainActivity;
 import schedule.mock.events.ServiceLocationChangedEvent;
 import schedule.mock.events.UIShowAfterFinishMockingEvent;
+import schedule.mock.events.UIShowCanNotMockLocationEvent;
 import schedule.mock.prefs.Prefs;
 import schedule.mock.utils.BusProvider;
 import schedule.mock.utils.LL;
@@ -116,7 +117,7 @@ public final class StartLocationTrackingService extends Service implements
 				mMockLocationContinueTask.execute();
 				postNotification();
 			} catch (SecurityException _e) {
-				stopSelf();
+				forceCloseServiceCantMockLocation();
 				return;
 			}
 		}
@@ -126,7 +127,12 @@ public final class StartLocationTrackingService extends Service implements
 		startTracking();
 	}
 
-	private void setMockLocation(long _elapsedRealtimeNanos, long _currentTime) {
+	private   void forceCloseServiceCantMockLocation() {
+		BusProvider.getBus().post(new UIShowCanNotMockLocationEvent());
+		stopSelf();
+	}
+
+	private void setMockLocation(long _elapsedRealtimeNanos, long _currentTime) throws SecurityException{
 		synchronized (LOCK) {
 			if (mInMockMode) {
 				mMockLocation.setAccuracy(3.0f);
@@ -191,7 +197,7 @@ public final class StartLocationTrackingService extends Service implements
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intentNotify, 0);
 
 		// Add values to the builder
-		builder = new NotificationCompat.Builder(this).setAutoCancel(false).setSmallIcon(R.drawable.ic_launcher)
+		builder = new NotificationCompat.Builder(this).setAutoCancel(false).setSmallIcon(R.drawable.ic_radar_long)
 				.setContentTitle(contentTitle).setContentText(mMockAddressName).setContentIntent(pendingIntent);
 
 		startForeground(ID_TRAY_NOTIFICATION, builder.build());
@@ -235,7 +241,11 @@ public final class StartLocationTrackingService extends Service implements
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					service.setMockLocation(mElapsedTimeNanos, mCurrentTime);
+					try {
+						service.setMockLocation(mElapsedTimeNanos, mCurrentTime);
+					}catch (SecurityException _e) {
+						service.forceCloseServiceCantMockLocation();
+					}
 
 					/*
 					 * Change the elapsed uptime and clock time by the amount of
@@ -245,6 +255,8 @@ public final class StartLocationTrackingService extends Service implements
 							* StartLocationTrackingService.NANOSECONDS_PER_SECOND;
 					mCurrentTime += mInjectionInterval * StartLocationTrackingService.MILLISECONDS_PER_SECOND;
 				}
+			} else {
+				//TODO There's no service more, what the App should do is not clear.
 			}
 			return null;
 		}

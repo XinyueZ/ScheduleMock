@@ -32,7 +32,6 @@
 			android:layout_centerVertical="true"
 			android:layout_height="wrap_content"
 			style="@style/SwitchCompat"
-			app:textOff="@string/general_on"
-			android:visibility="gone"
-			app:textOn="@string/general_off"/>
+			app:textOff="@string/general_off"
+			app:textOn="@string/general_on"/>
 </RelativeLayout>
