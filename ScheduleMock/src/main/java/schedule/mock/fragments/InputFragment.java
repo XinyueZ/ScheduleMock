@@ -15,6 +15,7 @@ import schedule.mock.data.DOLatLng;
 import schedule.mock.data.DONearBy;
 import schedule.mock.data.DONearByResult;
 import schedule.mock.events.UIPlaceListIsReadyEvent;
+import schedule.mock.events.UIShowGoogleMapEvent;
 import schedule.mock.events.UIShowPlaceListEvent;
 import schedule.mock.fragments.dialog.PlaceListDialogFragment;
 import schedule.mock.prefs.Prefs;
@@ -26,6 +27,7 @@ import schedule.mock.utils.Utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
@@ -57,7 +59,16 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 	@Override
 	public View onCreateView(LayoutInflater _inflater, ViewGroup _container, Bundle _savedInstanceState) {
 		View rootView = _inflater.inflate(LAYOUT, _container, false);
-		startVoiceRecognitionActivityAndPayloadPlaces();
+		Prefs prefs = Prefs.getInstance();
+		if( prefs.getMockStatus() ) {
+			/*Show map for being in mocking status directly.*/
+			Location location = new Location("mock");
+			location.setLatitude(Double.valueOf(prefs.getMockLat()));
+			location.setLongitude(Double.valueOf(prefs.getMockLng()));
+			BusProvider.getBus().post(new UIShowGoogleMapEvent(location));
+		} else {
+			startVoiceRecognitionActivityAndPayloadPlaces();
+		}
 		return rootView;
 	}
 

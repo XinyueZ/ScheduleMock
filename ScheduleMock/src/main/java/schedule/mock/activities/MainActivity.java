@@ -222,11 +222,11 @@ public final class MainActivity extends BaseActivity implements
 			mProgressDialog.dismiss();
 		}
 		// finish();
-		openGoogleMap(new UIShowGoogleMapEvent(_location));
+		onUIShowGoogleMap(new UIShowGoogleMapEvent(_location));
 	}
 
 	@Subscribe
-	public void openGoogleMap(UIShowGoogleMapEvent _e) {
+	public void onUIShowGoogleMap(UIShowGoogleMapEvent _e) {
 		Location location = _e.getLocation();
 		getSupportFragmentManager()
 				.beginTransaction()
@@ -332,7 +332,7 @@ public final class MainActivity extends BaseActivity implements
 	public void onUIShowAfterFinishMocking(UIShowAfterFinishMockingEvent _e) {
 		changeSwitchStatus(false);
 
-		/*Stop mocking location for some reason manually.*/
+		/* Stop mocking location for some reason manually. */
 		if (mCuttingMock) {
 			mCuttingMock = false;
 			findMyLocation();
