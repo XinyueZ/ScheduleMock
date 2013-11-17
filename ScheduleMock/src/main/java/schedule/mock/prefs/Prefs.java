@@ -14,7 +14,6 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-
 /**
  * Store app and device information.
  * 
@@ -34,44 +33,20 @@ public final class Prefs extends BasicPrefs {
 	private final static String OS_VERSION = "DeviceData.osversion";
 	/** The Constant SIM_COUNTRY_ISO. */
 	private final static String SIM_COUNTRY_ISO = "DeviceData.country";
-	/** App preferences**/
+	/** App preferences **/
 	private final static String KEY_RADIUS = "radius";
-	/** Location mock status*/
+	/** Location mock status */
 	private final static String KEY_MOCK_STATUS = "mock.status";
-	/** Lat of mocking*/
+	/** Lat of mocking */
 	private final static String KEY_MOCK_LAT = "mock.lat";
-	/** Lng of mocking*/
+	/** Lng of mocking */
 	private final static String KEY_MOCK_LNG = "mock.lng";
 	/** The Instance. */
 	private static Prefs sInstance;
 
-
-	/**
-	 * Singleton method.
-	 * 
-	 * @return single instance of DeviceData
-	 */
-	public static Prefs createInstance(Context _cxt) {
-		if (sInstance == null) {
-			synchronized (Prefs.class) {
-				if (sInstance == null) {
-					sInstance = new Prefs(_cxt);
-				}
-			}
-		}
-		return sInstance;
-	}
-
-
-	public static Prefs getInstance() {
-		return sInstance;
-	}
-
-
 	private Prefs() {
 		super(null);
 	}
-
 
 	/**
 	 * Created a DeviceData storage.
@@ -101,6 +76,25 @@ public final class Prefs extends BasicPrefs {
 		}
 	}
 
+	/**
+	 * Singleton method.
+	 * 
+	 * @return single instance of DeviceData
+	 */
+	public static Prefs createInstance(Context _cxt) {
+		if (sInstance == null) {
+			synchronized (Prefs.class) {
+				if (sInstance == null) {
+					sInstance = new Prefs(_cxt);
+				}
+			}
+		}
+		return sInstance;
+	}
+
+	public static Prefs getInstance() {
+		return sInstance;
+	}
 
 	/**
 	 * Get app version.
@@ -110,7 +104,6 @@ public final class Prefs extends BasicPrefs {
 	public String getAppVersion() {
 		return getString(VERSION, "");
 	}
-
 
 	/**
 	 * Save app version.
@@ -123,7 +116,6 @@ public final class Prefs extends BasicPrefs {
 		return setString(VERSION, _value);
 	}
 
-
 	/**
 	 * Get device id.
 	 * 
@@ -132,7 +124,6 @@ public final class Prefs extends BasicPrefs {
 	public String getDeviceId() {
 		return getString(DEVICE_ID, "");
 	}
-
 
 	/**
 	 * Save device id.
@@ -145,7 +136,6 @@ public final class Prefs extends BasicPrefs {
 		return setString(DEVICE_ID, _value);
 	}
 
-
 	/**
 	 * Get device model.
 	 * 
@@ -154,7 +144,6 @@ public final class Prefs extends BasicPrefs {
 	public String getDeviceModel() {
 		return getString(MODEL, "");
 	}
-
 
 	/**
 	 * Save device model.
@@ -167,7 +156,6 @@ public final class Prefs extends BasicPrefs {
 		return setString(MODEL, _value);
 	}
 
-
 	/**
 	 * Get OS name.
 	 * 
@@ -176,7 +164,6 @@ public final class Prefs extends BasicPrefs {
 	public String getOs() {
 		return getString(OS, "");
 	}
-
 
 	/**
 	 * Save OS name.
@@ -189,7 +176,6 @@ public final class Prefs extends BasicPrefs {
 		return setString(OS, _value);
 	}
 
-
 	/**
 	 * Get OS version.
 	 * 
@@ -198,7 +184,6 @@ public final class Prefs extends BasicPrefs {
 	public String getOsVersion() {
 		return getString(OS_VERSION, "");
 	}
-
 
 	/**
 	 * Save current OS version.
@@ -211,20 +196,18 @@ public final class Prefs extends BasicPrefs {
 		return setString(OS_VERSION, _value);
 	}
 
-
 	/**
 	 * Get a country iso code.
-	 *
+	 * 
 	 * @return the sim country iso
 	 */
 	public String getSimCountryIso() {
 		return getString(SIM_COUNTRY_ISO, "");
 	}
 
-
 	/**
 	 * Save country iso from sim-card.
-	 *
+	 * 
 	 * @param _value
 	 *            the _value
 	 * @return true, if successful
@@ -233,8 +216,37 @@ public final class Prefs extends BasicPrefs {
 		return setString(SIM_COUNTRY_ISO, _value);
 	}
 
+	public int getRadius() {
+		return getInt(KEY_RADIUS, 100);
+	}
 
+	public void setRadius(int _radius) {
+		setInt(KEY_RADIUS, _radius);
+	}
 
+	public boolean getMockStatus() {
+		return getBoolean(KEY_MOCK_STATUS, false);
+	}
+
+	public void setMockStatus(boolean _on) {
+		setBoolean(KEY_MOCK_STATUS, _on);
+	}
+
+	public String getMockLat() {
+		return getString(KEY_MOCK_LAT, null);
+	}
+
+	public void setMockLat(String _lat) {
+		setString(KEY_MOCK_LAT, _lat);
+	}
+
+	public String getMockLng() {
+		return getString(KEY_MOCK_LNG, null);
+	}
+
+	public void setMockLng(String _lng) {
+		setString(KEY_MOCK_LNG, _lng);
+	}
 
 	/**
 	 * Fetch Device "UDID" like iOS.
@@ -285,7 +297,6 @@ public final class Prefs extends BasicPrefs {
 			return md5(readableId);
 		}
 
-
 		/**
 		 * Md5.
 		 * 
@@ -302,39 +313,5 @@ public final class Prefs extends BasicPrefs {
 			BigInteger bigInt = new BigInteger(1, hash);
 			return String.format("%1$032X", bigInt).toLowerCase();
 		}
-	}
-
-
-
-	public void setRadius(int _radius) {
-		setInt(KEY_RADIUS, _radius);
-	}
-
-	public int getRadius() {
-		return getInt(KEY_RADIUS, 100);
-	}
-
-	public void setMockStatus(boolean _on) {
-		setBoolean(KEY_MOCK_STATUS, _on);
-	}
-
-	public boolean getMockStatus() {
-		return getBoolean(KEY_MOCK_STATUS, false);
-	}
-
-	public void setMockLat(double _lat) {
-		setFloat(KEY_MOCK_LAT, (float)_lat);
-	}
-
-	public double getMockLat() {
-		return getFloat(KEY_MOCK_LAT, 0f);
-	}
-
-	public void setMockLng(double _lng) {
-		setFloat(KEY_MOCK_LNG, (float)_lng);
-	}
-
-	public double getMockLng() {
-		return getFloat(KEY_MOCK_LNG, 0f);
 	}
 }

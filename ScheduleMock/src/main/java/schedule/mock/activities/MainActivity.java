@@ -27,6 +27,7 @@ import schedule.mock.events.ServiceLocationChangedEvent;
 import schedule.mock.events.StartLocationMockTrackingEvent;
 import schedule.mock.events.UIShowAfterFinishMockingEvent;
 import schedule.mock.events.UIShowCanNotMockLocationEvent;
+import schedule.mock.events.UIShowGoogleMapEvent;
 import schedule.mock.events.UIShowLoadingCompleteEvent;
 import schedule.mock.events.UIShowLoadingEvent;
 import schedule.mock.events.UIShowNetworkImageEvent;
@@ -221,11 +222,17 @@ public final class MainActivity extends BaseActivity implements
 			mProgressDialog.dismiss();
 		}
 		// finish();
+		openGoogleMap(new UIShowGoogleMapEvent(_location));
+	}
+
+	@Subscribe
+	public void openGoogleMap(UIShowGoogleMapEvent _e) {
+		Location location = _e.getLocation();
 		getSupportFragmentManager()
 				.beginTransaction()
 				.setCustomAnimations(R.anim.slide_in_from_down_to_top_fast, R.anim.no, R.anim.no,
 						R.anim.slide_out_from_top_to_down_fast)
-				.add(App.MAIN_CONTAINER, MyMapFragment.newInstance(_location, null)).addToBackStack(null).commit();
+				.add(App.MAIN_CONTAINER, MyMapFragment.newInstance(location, null)).addToBackStack(null).commit();
 	}
 
 	/**

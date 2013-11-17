@@ -80,7 +80,10 @@ public final class StartLocationTrackingService extends Service implements
 					mMockLocationContinueTask.cancel(true);
 					mMockLocationContinueTask = null;
 				}
-				Prefs.getInstance().setMockStatus(false);
+				Prefs prefs = Prefs.getInstance();
+				prefs.setMockStatus(false);
+				prefs.setMockLat(null);
+				prefs.setMockLng(null);
 				mLocationClient.setMockMode(false);
 				mInMockMode = false;
 				removeNotification();
@@ -107,7 +110,10 @@ public final class StartLocationTrackingService extends Service implements
 		if (mInMockMode) {
 			try {
 				mLocationClient.setMockMode(true);
-				Prefs.getInstance().setMockStatus(true);
+				Prefs prefs = Prefs.getInstance();
+				prefs.setMockStatus(true);
+				prefs.setMockLat(mMockLocation.getLatitude());
+				prefs.setMockLng(mMockLocation.getLongitude());
 				msgResId = R.string.toast_start_location_mocking;
 				long elapsedRealTime = android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 ? SystemClock
 						.elapsedRealtimeNanos() : SystemClock.elapsedRealtime();
