@@ -16,6 +16,7 @@ import schedule.mock.data.DONearBy;
 import schedule.mock.data.DONearByResult;
 import schedule.mock.events.UIPlaceListIsReadyEvent;
 import schedule.mock.events.UIShowPlaceListEvent;
+import schedule.mock.fragments.dialog.PlaceListDialogFragment;
 import schedule.mock.prefs.Prefs;
 import schedule.mock.tasks.net.GsonRequestTask;
 import schedule.mock.utils.BusProvider;
@@ -299,7 +300,6 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 	 * Show debug info(latlng) on textview.
 	 * 
 	 * @param _latLng
-	 * @param _view
 	 */
 	private void showDebugLatLng(DOLatLng _latLng) {
 		View view = getView();

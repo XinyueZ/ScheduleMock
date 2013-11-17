@@ -22,6 +22,7 @@ import schedule.mock.R;
 import schedule.mock.data.DOGeocodeFromLatLng;
 import schedule.mock.data.DOGeocodeResult;
 import schedule.mock.data.DOLatLng;
+import schedule.mock.events.CutMockingEvent;
 import schedule.mock.events.ServiceLocationChangedEvent;
 import schedule.mock.events.StartLocationMockTrackingEvent;
 import schedule.mock.events.UIShowAfterFinishMockingEvent;
@@ -31,8 +32,9 @@ import schedule.mock.events.UIShowLoadingEvent;
 import schedule.mock.events.UIShowNetworkImageEvent;
 import schedule.mock.events.UIShowOpenMockPermissionEvent;
 import schedule.mock.fragments.HomeFragment;
-import schedule.mock.fragments.ImageDialogFragment;
 import schedule.mock.fragments.MyMapFragment;
+import schedule.mock.fragments.dialog.AskCuttingMockDialogFragment;
+import schedule.mock.fragments.dialog.ImageDialogFragment;
 import schedule.mock.prefs.Prefs;
 import schedule.mock.services.StartLocationTrackingService;
 import schedule.mock.tasks.net.GsonRequestTask;
@@ -48,6 +50,7 @@ public final class MainActivity extends BaseActivity implements
 	private PullToRefreshAttacher mPullToRefreshAttacher;
 	private boolean mLocationInProcess;
 	private ProgressDialog mProgressDialog;
+	private boolean mCuttingMock;
 
 	@Override
 	protected void onCreate(Bundle _savedInstanceState) {
@@ -62,10 +65,11 @@ public final class MainActivity extends BaseActivity implements
 		changeSwitchStatus(Prefs.getInstance().getMockStatus());
 	}
 
-
 	/***
 	 * The only place that show the status of "mocked location".
-	 * @param _status "ON": location's been mocked.
+	 * 
+	 * @param _status
+	 *            "ON": location's been mocked.
 	 */
 	private void changeSwitchStatus(boolean _status) {
 		View customView = getSupportActionBar().getCustomView();
@@ -192,7 +196,7 @@ public final class MainActivity extends BaseActivity implements
 			 */
 			new GsonRequestTask<DOGeocodeFromLatLng>(getApplicationContext(), Request.Method.GET, url.trim(),
 					DOGeocodeFromLatLng.class).execute();
-			stopLocationProcess();
+			stopLocationProcess();// no more loction now.
 		} else {
 			onUIShowAfterStartMocking(_e.getLocation());
 		}
@@ -217,9 +221,10 @@ public final class MainActivity extends BaseActivity implements
 			mProgressDialog.dismiss();
 		}
 		// finish();
-		getSupportFragmentManager().beginTransaction()
-				.setCustomAnimations(R.anim.slide_in_from_down_to_top_fast, R.anim.no,
-						R.anim.no, R.anim.slide_out_from_top_to_down_fast)
+		getSupportFragmentManager()
+				.beginTransaction()
+				.setCustomAnimations(R.anim.slide_in_from_down_to_top_fast, R.anim.no, R.anim.no,
+						R.anim.slide_out_from_top_to_down_fast)
 				.add(App.MAIN_CONTAINER, MyMapFragment.newInstance(_location, null)).addToBackStack(null).commit();
 	}
 
@@ -274,7 +279,24 @@ public final class MainActivity extends BaseActivity implements
 	 * onStartLocationMockTracking to mock location.
 	 */
 	private void findMyLocation() {
-		startLocationProcess(new Intent(getApplicationContext(), StartLocationTrackingService.class));
+		if (Prefs.getInstance().getMockStatus()) {
+			/* In mock-status should stop mocking first. */
+			AskCuttingMockDialogFragment.showInstance(this);
+		} else {
+			startLocationProcess(new Intent(getApplicationContext(), StartLocationTrackingService.class));
+		}
+	}
+
+	/***
+	 * Cut mocking, it could be fired when user reopen the App by clicking
+	 * notification center and then try to find "my loction" @{findMyLocation} .
+	 * 
+	 * @param _e
+	 */
+	@Subscribe
+	public void onCutMocking(CutMockingEvent _e) {
+		stopLocationProcess();
+		mCuttingMock = true;
 	}
 
 	/***
@@ -302,6 +324,12 @@ public final class MainActivity extends BaseActivity implements
 	@Subscribe
 	public void onUIShowAfterFinishMocking(UIShowAfterFinishMockingEvent _e) {
 		changeSwitchStatus(false);
+
+		/*Stop mocking location for some reason manually.*/
+		if (mCuttingMock) {
+			mCuttingMock = false;
+			findMyLocation();
+		}
 	}
 
 	@Subscribe

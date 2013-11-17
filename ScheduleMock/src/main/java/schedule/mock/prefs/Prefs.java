@@ -38,6 +38,10 @@ public final class Prefs extends BasicPrefs {
 	private final static String KEY_RADIUS = "radius";
 	/** Location mock status*/
 	private final static String KEY_MOCK_STATUS = "mock.status";
+	/** Lat of mocking*/
+	private final static String KEY_MOCK_LAT = "mock.lat";
+	/** Lng of mocking*/
+	private final static String KEY_MOCK_LNG = "mock.lng";
 	/** The Instance. */
 	private static Prefs sInstance;
 
@@ -316,5 +320,21 @@ public final class Prefs extends BasicPrefs {
 
 	public boolean getMockStatus() {
 		return getBoolean(KEY_MOCK_STATUS, false);
+	}
+
+	public void setMockLat(double _lat) {
+		setFloat(KEY_MOCK_LAT, (float)_lat);
+	}
+
+	public double getMockLat() {
+		return getFloat(KEY_MOCK_LAT, 0f);
+	}
+
+	public void setMockLng(double _lng) {
+		setFloat(KEY_MOCK_LNG, (float)_lng);
+	}
+
+	public double getMockLng() {
+		return getFloat(KEY_MOCK_LNG, 0f);
 	}
 }

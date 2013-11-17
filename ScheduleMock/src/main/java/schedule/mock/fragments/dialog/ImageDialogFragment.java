@@ -1,4 +1,4 @@
-package schedule.mock.fragments;
+package schedule.mock.fragments.dialog;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -31,7 +31,7 @@ public final class ImageDialogFragment extends BaseDialogFragment {
 	public static void showInstance(FragmentActivity _context, String _url) {
 		Bundle args = new Bundle();
 		args.putString(KEY_URL, _url);
-		DialogFragment fragment = (DialogFragment) ImageDialogFragment.instantiate(_context,
+		DialogFragment fragment = (DialogFragment) instantiate(_context,
 				ImageDialogFragment.class.getName(), args);
 		show(_context, fragment, TAG);
 	}
@@ -41,7 +41,7 @@ public final class ImageDialogFragment extends BaseDialogFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setCancelable(true);
-		setStyle(DialogFragment.STYLE_NO_TITLE, R.style.No_Title_Dialog_Style);
+		setStyle(STYLE_NO_TITLE, R.style.No_Title_Dialog_Style);
 	}
 
 

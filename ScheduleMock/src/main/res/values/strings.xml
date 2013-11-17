@@ -23,6 +23,7 @@
 	<string name="toast_start_location_mocking">Start location mocking.</string>
 	<string name="toast_stop_location_tracking">Stop location tracking.</string>
 	<string name="toast_stop_location_mocking">Stop location mocking.</string>
+	<string name="popup_stop_mocking">Stop mocking</string>
 	<string name="popup_my_location">Locating…</string>
 	<string name="popup_cut_mocking">You are mocking your location, do you want to switch onto your real location?</string>
 	<string name="menu_my_location">My Location</string>

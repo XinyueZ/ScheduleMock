@@ -1,4 +1,4 @@
-package schedule.mock.fragments;
+package schedule.mock.fragments.dialog;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;

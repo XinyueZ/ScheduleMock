@@ -1,4 +1,4 @@
-package schedule.mock.fragments;
+package schedule.mock.fragments.dialog;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -25,7 +25,7 @@ public final class PlaceListDialogFragment extends BaseDialogFragment implements
 
 
 	public static void showInstance(FragmentActivity _context) {
-		DialogFragment fragment = (DialogFragment) PlaceListDialogFragment.instantiate(_context,
+		DialogFragment fragment = (DialogFragment) instantiate(_context,
 				PlaceListDialogFragment.class.getName());
 		show(  _context, fragment, TAG);
 	}
