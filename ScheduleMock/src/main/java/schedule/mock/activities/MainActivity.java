@@ -218,7 +218,9 @@ public final class MainActivity extends BaseActivity implements
 		}
 		// finish();
 		getSupportFragmentManager().beginTransaction()
-				.add(App.MAIN_CONTAINER, MyMapFragment.newInstance(_location, null)).commit();
+				.setCustomAnimations(R.anim.slide_in_from_down_to_top_fast, R.anim.no,
+						R.anim.no, R.anim.slide_out_from_top_to_down_fast)
+				.add(App.MAIN_CONTAINER, MyMapFragment.newInstance(_location, null)).addToBackStack(null).commit();
 	}
 
 	/**
@@ -299,7 +301,7 @@ public final class MainActivity extends BaseActivity implements
 
 	@Subscribe
 	public void onUIShowAfterFinishMocking(UIShowAfterFinishMockingEvent _e) {
-		changeSwitchStatus(true);
+		changeSwitchStatus(false);
 	}
 
 	@Subscribe
