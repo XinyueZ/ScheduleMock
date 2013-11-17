@@ -127,11 +127,13 @@ public final class MainActivity extends BaseActivity implements
 	@Override
 	public boolean onPrepareOptionsMenu(Menu _menu) {
 		MenuItem tracking = _menu.findItem(R.id.menu_my_location);
-		if (mLocationInProcess) {
-			tracking.setEnabled(false);
-		} else {
-			tracking.setEnabled(true);
-		}
+
+		/*At mock status, user can not change to real location.
+		* But there's still a fallback dialog to prevent switching.
+		* See. AskCuttingMockDialogFragment in findMyLocation().
+		* */
+		tracking.setEnabled(!(mLocationInProcess || Prefs.getInstance().getMockStatus()));
+
 		return super.onPrepareOptionsMenu(_menu);
 	}
 
