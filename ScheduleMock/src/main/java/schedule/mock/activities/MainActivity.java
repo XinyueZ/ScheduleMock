@@ -156,6 +156,7 @@ public final class MainActivity extends BaseActivity implements
 			if (!aSwitch.isChecked()) {
 				/* Stop location system */
 				stopLocationProcess();
+				mCuttingMock = true;
 			}
 			break;
 		default:
@@ -330,11 +331,15 @@ public final class MainActivity extends BaseActivity implements
 		}
 	}
 
+	/***
+	 * Mocking is finished.  See also in @link{MyMapFragment}.
+	 * @param _e
+	 */
 	@Subscribe
 	public void onUIShowAfterFinishMocking(UIShowAfterFinishMockingEvent _e) {
 		changeSwitchStatus(false);
 
-		/* Stop mocking location for some reason manually. */
+		/* Stop mocking location for some reasons manually. */
 		if (mCuttingMock) {
 			mCuttingMock = false;
 			findMyLocation();
