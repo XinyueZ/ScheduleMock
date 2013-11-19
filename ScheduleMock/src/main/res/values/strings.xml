@@ -27,4 +27,12 @@
 	<string name="popup_my_location">Locating…</string>
 	<string name="popup_cut_mocking">You are mocking your location, do you want to switch onto your real location?</string>
 	<string name="menu_my_location">My Location</string>
+
+	<string-array name="menu">
+		<item>Input</item>
+		<item>Map</item>
+		<item>History</item>
+		<item>Schedule</item>
+		<item>G+ Login</item>
+	</string-array>
 </resources>

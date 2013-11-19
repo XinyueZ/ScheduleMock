@@ -11,6 +11,7 @@ import schedule.mock.tasks.net.TaskHelper;
 import schedule.mock.utils.BusProvider;
 
 public abstract class BaseActivity extends ActionBarActivity {
+
 	@Override
 	protected void onResume() {
 		super.onResume();

@@ -2,8 +2,11 @@ package schedule.mock.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -44,7 +47,7 @@ import schedule.mock.utils.DisplayUtil;
 import schedule.mock.utils.Utils;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshAttacher;
 
-public final class MainActivity extends BaseActivity implements
+public final class MainActivity extends BaseActivity implements DrawerLayout.DrawerListener,
 		uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefreshListener, View.OnClickListener {
 
 	public static final int LAYOUT = R.layout.activity_main;
@@ -52,6 +55,7 @@ public final class MainActivity extends BaseActivity implements
 	private boolean mLocationInProcess;
 	private ProgressDialog mProgressDialog;
 	private boolean mCuttingMock;
+	private ActionBarDrawerToggle mDrawerToggle;
 
 	@Override
 	protected void onCreate(Bundle _savedInstanceState) {
@@ -64,6 +68,43 @@ public final class MainActivity extends BaseActivity implements
 					.add(App.MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext())).commit();
 		}
 		changeSwitchStatus(Prefs.getInstance().getMockStatus());
+
+		DrawerLayout sidebar = (DrawerLayout) findViewById(R.id.sidebar);
+		sidebar.setDrawerListener(this);
+		mDrawerToggle = new ActionBarDrawerToggle(this, sidebar, R.drawable.ic_drawer, -1, -1);
+	}
+
+	@Override
+	public void onDrawerOpened(View drawerView) {
+		mDrawerToggle.onDrawerOpened(drawerView);
+	}
+
+	@Override
+	public void onDrawerClosed(View drawerView) {
+		mDrawerToggle.onDrawerClosed(drawerView);
+	}
+
+	@Override
+	public void onDrawerSlide(View drawerView, float slideOffset) {
+		mDrawerToggle.onDrawerSlide(drawerView, slideOffset);
+	}
+
+	@Override
+	public void onDrawerStateChanged(int newState) {
+		mDrawerToggle.onDrawerStateChanged(newState);
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		// Sync the toggle state after onRestoreInstanceState has occurred.
+		mDrawerToggle.syncState();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration _newConfig) {
+		super.onConfigurationChanged(_newConfig);
+		mDrawerToggle.onConfigurationChanged(_newConfig);
 	}
 
 	/***
@@ -116,10 +157,14 @@ public final class MainActivity extends BaseActivity implements
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem _item) {
-		switch (_item.getItemId()) {
-		case R.id.menu_my_location:
-			findMyLocation();
+		if (mDrawerToggle.onOptionsItemSelected(_item)) {
 			return true;
+		} else {
+			switch (_item.getItemId()) {
+			case R.id.menu_my_location:
+				findMyLocation();
+				return true;
+			}
 		}
 		return super.onOptionsItemSelected(_item);
 	}
@@ -128,10 +173,11 @@ public final class MainActivity extends BaseActivity implements
 	public boolean onPrepareOptionsMenu(Menu _menu) {
 		MenuItem tracking = _menu.findItem(R.id.menu_my_location);
 
-		/*At mock status, user can not change to real location.
-		* But there's still a fallback dialog to prevent switching.
-		* See. AskCuttingMockDialogFragment in findMyLocation().
-		* */
+		/*
+		 * At mock status, user can not change to real location. But there's
+		 * still a fallback dialog to prevent switching. See.
+		 * AskCuttingMockDialogFragment in findMyLocation().
+		 */
 		tracking.setEnabled(!(mLocationInProcess || Prefs.getInstance().getMockStatus()));
 
 		return super.onPrepareOptionsMenu(_menu);
@@ -332,7 +378,8 @@ public final class MainActivity extends BaseActivity implements
 	}
 
 	/***
-	 * Mocking is finished.  See also in @link{MyMapFragment}.
+	 * Mocking is finished. See also in @link{MyMapFragment}.
+	 * 
 	 * @param _e
 	 */
 	@Subscribe
@@ -355,4 +402,5 @@ public final class MainActivity extends BaseActivity implements
 	public void onShowOpenMockPermission(UIShowOpenMockPermissionEvent _e) {
 
 	}
+
 }

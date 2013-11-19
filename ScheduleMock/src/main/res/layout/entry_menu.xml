@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                style="@style/Menu_Item_Container_Style">
+
+	<ImageView
+			android:id="@+id/iv_menu_icon"
+			android:src="@drawable/ic_radar_short"
+			style="@style/Menu_Item_Style"/>
+
+	<TextView
+			android:id="@+id/tv_menu_text"
+			android:layout_toRightOf="@+id/iv_menu_icon"
+			style="@style/Menu_Item_Text_Style"/>
+
+</RelativeLayout>
