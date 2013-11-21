@@ -1,7 +1,6 @@
 package schedule.mock.adapters;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -9,28 +8,27 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import schedule.mock.R;
+import schedule.mock.enums.MenuItem;
 
 public final class MenuAdapter extends BaseAdapter {
 	public static final int LAYOUT = R.layout.entry_menu;
 	private Context mContext;
+	private MenuItem[] mMenuItems;
 
-	public MenuAdapter(Context _context) {
+	public MenuAdapter(Context _context, MenuItem... _menuItems) {
 		mContext = _context;
+		mMenuItems = _menuItems;
+
 	}
 
 	@Override
 	public int getCount() {
-		Resources resources = mContext.getResources();
-		String[] arr = resources.getStringArray(R.array.menu);
-		int sz = arr.length;
-		return sz;
+		return mMenuItems.length;
 	}
 
 	@Override
 	public Object getItem(int _position) {
-		Resources resources = mContext.getResources();
-		String[] arr = resources.getStringArray(R.array.menu);
-		return arr[_position];
+		return mMenuItems[_position];
 	}
 
 	@Override
@@ -48,6 +46,10 @@ public final class MenuAdapter extends BaseAdapter {
 		} else {
 			holder = (ViewHolder) _convertView.getTag();
 		}
+		MenuItem menuItem = mMenuItems[_position];
+		_convertView.setEnabled(menuItem.isEnable());
+//		_convertView.setSelected(!menuItem.isEnable());
+
 		holder.Text.setText(getItem(_position).toString());
 		return _convertView;
 	}

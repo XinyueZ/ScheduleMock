@@ -23,6 +23,7 @@ public final class MyMapFragment extends SupportMapFragment {
 	private static final String EXTRAS_LAT = "extras.map.lat";
 	private static final String EXTRAS_LNG = "extras.map.lng";
 	private static final String EXTRAS_NAME = "extras.map.location.name";
+	private static final String EXTRAS_GIVEN_LOCATION = "extras.map.given.location";
 
 	public static MyMapFragment newInstance(Location _latLng, String _name) {
 		MyMapFragment myMapFragment = new MyMapFragment();
@@ -30,6 +31,15 @@ public final class MyMapFragment extends SupportMapFragment {
 		args.putDouble(EXTRAS_LAT, _latLng.getLatitude());
 		args.putDouble(EXTRAS_LNG, _latLng.getLongitude());
 		args.putString(EXTRAS_NAME, _name);
+		args.putBoolean(EXTRAS_GIVEN_LOCATION, true);
+		myMapFragment.setArguments(args);
+		return myMapFragment;
+	}
+
+	public static MyMapFragment newInstance() {
+		MyMapFragment myMapFragment = new MyMapFragment();
+		Bundle args = new Bundle();
+		args.putBoolean(EXTRAS_GIVEN_LOCATION, false);
 		myMapFragment.setArguments(args);
 		return myMapFragment;
 	}
@@ -44,9 +54,17 @@ public final class MyMapFragment extends SupportMapFragment {
 		googleMap.getUiSettings().setZoomGesturesEnabled(true);
 		googleMap.setMyLocationEnabled(true);
 		Bundle args = _supportMapFragment.getArguments();
-		double lat =args .getDouble(EXTRAS_LAT);
-		double lng =args.getDouble(EXTRAS_LNG);
-		setMapLocation(googleMap, lat, lng);
+		boolean given = args.getBoolean(EXTRAS_GIVEN_LOCATION);
+		if (given) {
+			double lat = args.getDouble(EXTRAS_LAT);
+			double lng = args.getDouble(EXTRAS_LNG);
+			setMapLocation(googleMap, lat, lng);
+		} else {
+			Location location = googleMap.getMyLocation();
+			if (location != null) {
+				setMapLocation(googleMap, location.getLatitude(), location.getLongitude());
+			}
+		}
 	}
 
 	private static void setMapLocation(GoogleMap _googleMap, double _lat, double _lng) {
@@ -55,7 +73,6 @@ public final class MyMapFragment extends SupportMapFragment {
 		_googleMap.addMarker(new MarkerOptions().position(latLng));
 		_googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, MEDIUM_ZOOM));
 	}
-
 
 	@Override
 	public void onDestroyView() {
@@ -75,12 +92,13 @@ public final class MyMapFragment extends SupportMapFragment {
 
 	/***
 	 * Mocking is finished. See also in @link{MainActivity}.
+	 * 
 	 * @param _e
 	 */
 	@Subscribe
 	public void onUIShowAfterFinishMocking(UIShowAfterFinishMockingEvent _e) {
 		GoogleMap googleMap = getMap();
-		if( googleMap != null) {
+		if (googleMap != null) {
 			googleMap.clear();
 		}
 	}
@@ -91,10 +109,10 @@ public final class MyMapFragment extends SupportMapFragment {
 	@Subscribe
 	public void onServiceLocationChanged(ServiceLocationChangedEvent _e) {
 		GoogleMap googleMap = getMap();
-		if( googleMap != null) {
+		if (googleMap != null) {
 			Location location = _e.getLocation();
 			googleMap.clear();
-			setMapLocation(googleMap, location.getLatitude(),location.getLongitude());
+			setMapLocation(googleMap, location.getLatitude(), location.getLongitude());
 		}
 	}
 }

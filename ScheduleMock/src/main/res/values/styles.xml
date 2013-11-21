@@ -1,9 +1,9 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="ThisAppTheme">
-        <!-- Customize your theme here. -->
-    </style>
+	<!-- Base application theme. -->
+	<style name="AppTheme" parent="ThisAppTheme">
+		<!-- Customize your theme here. -->
+	</style>
 
 	<style name="Home_Menu_Style">
 		<item name="android:layout_width">@dimen/home_menu_width</item>
@@ -60,13 +60,15 @@
 
 	<style name="Menu_Item_Container_Style">
 		<item name="android:layout_width">match_parent</item>
-		<item name="android:layout_height">50dp</item>
+		<item name="android:layout_height">58dp</item>
+		<item name="android:background">@drawable/selector_menu_item</item>
 	</style>
 
 	<style name="Menu_Item_Text_Style">
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_centerVertical">true</item>
 		<item name="android:gravity">center_vertical</item>
+		<item name="android:layout_marginLeft">10dp</item>
 		<item name="android:layout_height">wrap_content</item>
 	</style>
 </resources>

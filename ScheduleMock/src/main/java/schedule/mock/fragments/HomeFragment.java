@@ -6,8 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.squareup.otto.Subscribe;
+
 import schedule.mock.App;
 import schedule.mock.R;
+import schedule.mock.events.UIShowInputEvent;
+import schedule.mock.utils.BusProvider;
 
 
 public final class HomeFragment extends BaseFragment implements View.OnClickListener {
@@ -40,11 +44,7 @@ public final class HomeFragment extends BaseFragment implements View.OnClickList
 	public void onClick(View _v) {
 		switch (_v.getId()) {
 			case R.id.btn_mock_one_time:
-				getFragmentManager()
-						.beginTransaction()
-						.setCustomAnimations(R.anim.slide_in_from_down_to_top_fast, R.anim.no,
-								R.anim.no, R.anim.slide_out_from_top_to_down_fast)
-						.add(App.MAIN_CONTAINER, InputFragment.newInstance(getActivity())).addToBackStack(null).commit();
+				BusProvider.getBus().post(new UIShowInputEvent());
 				break;
 			case R.id.btn_schedule:
 				break;
@@ -52,4 +52,6 @@ public final class HomeFragment extends BaseFragment implements View.OnClickList
 				break;
 		}
 	}
+
+
 }

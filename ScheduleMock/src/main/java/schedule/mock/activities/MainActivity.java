@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.util.DisplayMetrics;
@@ -28,14 +29,19 @@ import schedule.mock.data.DOLatLng;
 import schedule.mock.events.CutMockingEvent;
 import schedule.mock.events.ServiceLocationChangedEvent;
 import schedule.mock.events.StartLocationMockTrackingEvent;
+import schedule.mock.events.UICloseSidebarEvent;
 import schedule.mock.events.UIShowAfterFinishMockingEvent;
 import schedule.mock.events.UIShowCanNotMockLocationEvent;
 import schedule.mock.events.UIShowGoogleMapEvent;
+import schedule.mock.events.UIShowHomeEvent;
+import schedule.mock.events.UIShowInputEvent;
 import schedule.mock.events.UIShowLoadingCompleteEvent;
 import schedule.mock.events.UIShowLoadingEvent;
+import schedule.mock.events.UIShowMapEvent;
 import schedule.mock.events.UIShowNetworkImageEvent;
 import schedule.mock.events.UIShowOpenMockPermissionEvent;
 import schedule.mock.fragments.HomeFragment;
+import schedule.mock.fragments.InputFragment;
 import schedule.mock.fragments.MyMapFragment;
 import schedule.mock.fragments.dialog.AskCuttingMockDialogFragment;
 import schedule.mock.fragments.dialog.ImageDialogFragment;
@@ -51,6 +57,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefreshListener, View.OnClickListener {
 
 	public static final int LAYOUT = R.layout.activity_main;
+	private static final int MAIN_CONTAINER = R.id.container;
 	private PullToRefreshAttacher mPullToRefreshAttacher;
 	private boolean mLocationInProcess;
 	private ProgressDialog mProgressDialog;
@@ -64,8 +71,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		mPullToRefreshAttacher = PullToRefreshAttacher.get(this);
 		setRefreshableView(this);
 		if (_savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction()
-					.add(App.MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext())).commit();
+			onShowHome(null);
 		}
 		changeSwitchStatus(Prefs.getInstance().getMockStatus());
 
@@ -74,29 +80,45 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		mDrawerToggle = new ActionBarDrawerToggle(this, sidebar, R.drawable.ic_drawer, -1, -1);
 	}
 
-	@Override
-	public void onDrawerOpened(View drawerView) {
-		mDrawerToggle.onDrawerOpened(drawerView);
+	@Subscribe
+	public void onShowHome(UIShowHomeEvent _e) {
+		getSupportFragmentManager().beginTransaction()
+				.add(MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext())).commit();
 	}
 
 	@Override
-	public void onDrawerClosed(View drawerView) {
-		mDrawerToggle.onDrawerClosed(drawerView);
+	public void onDrawerOpened(View _drawerView) {
+		mDrawerToggle.onDrawerOpened(_drawerView);
 	}
 
 	@Override
-	public void onDrawerSlide(View drawerView, float slideOffset) {
-		mDrawerToggle.onDrawerSlide(drawerView, slideOffset);
+	public void onDrawerClosed(View _drawerView) {
+		mDrawerToggle.onDrawerClosed(_drawerView);
+		DrawerLayout sidebar = (DrawerLayout) findViewById(R.id.sidebar);
+		Object event = sidebar.getTag();
+		if (event != null) {
+			/*
+			 * Open view that menuItem means. See MenuFragment.java for more
+			 * "menu" stories.
+			 */
+			BusProvider.getBus().post(event);
+			sidebar.setTag(null);
+		}
 	}
 
 	@Override
-	public void onDrawerStateChanged(int newState) {
-		mDrawerToggle.onDrawerStateChanged(newState);
+	public void onDrawerSlide(View _drawerView, float slideOffset) {
+		mDrawerToggle.onDrawerSlide(_drawerView, slideOffset);
 	}
 
 	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
+	public void onDrawerStateChanged(int _newState) {
+		mDrawerToggle.onDrawerStateChanged(_newState);
+	}
+
+	@Override
+	protected void onPostCreate(Bundle _savedInstanceState) {
+		super.onPostCreate(_savedInstanceState);
 		// Sync the toggle state after onRestoreInstanceState has occurred.
 		mDrawerToggle.syncState();
 	}
@@ -142,7 +164,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 
 	public void setRefreshableView(
 			uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefreshListener _refreshListener) {
-		View view = findViewById(App.MAIN_CONTAINER);
+		View view = findViewById(MAIN_CONTAINER);
 		if (mPullToRefreshAttacher != null) {
 			mPullToRefreshAttacher.addRefreshableView(view, _refreshListener);
 		}
@@ -276,12 +298,19 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 
 	@Subscribe
 	public void onUIShowGoogleMap(UIShowGoogleMapEvent _e) {
-		Location location = _e.getLocation();
+		onShowMap(new UIShowMapEvent(_e.getLocation()));
+	}
+
+	@Subscribe
+	public void onShowMap(UIShowMapEvent _e) {
+		Location _location = _e.getLocation();
 		getSupportFragmentManager()
 				.beginTransaction()
 				.setCustomAnimations(R.anim.slide_in_from_down_to_top_fast, R.anim.no, R.anim.no,
 						R.anim.slide_out_from_top_to_down_fast)
-				.add(App.MAIN_CONTAINER, MyMapFragment.newInstance(location, null)).addToBackStack(null).commit();
+				.add(MAIN_CONTAINER,
+						_location != null ? MyMapFragment.newInstance(_location, null) : MyMapFragment.newInstance())
+				.addToBackStack(null).commit();
 	}
 
 	/**
@@ -377,6 +406,15 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		}
 	}
 
+	@Subscribe
+	public void openInput(UIShowInputEvent _e) {
+		getSupportFragmentManager()
+				.beginTransaction()
+				.setCustomAnimations(R.anim.slide_in_from_down_to_top_fast, R.anim.no, R.anim.no,
+						R.anim.slide_out_from_top_to_down_fast).add(MAIN_CONTAINER, InputFragment.newInstance(this))
+				.addToBackStack(null).commit();
+	}
+
 	/***
 	 * Mocking is finished. See also in @link{MyMapFragment}.
 	 * 
@@ -391,6 +429,23 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 			mCuttingMock = false;
 			findMyLocation();
 		}
+	}
+
+	@Subscribe
+	public void onCloseSidebar(UICloseSidebarEvent _e) {
+		DrawerLayout sidebar = (DrawerLayout) findViewById(R.id.sidebar);
+		/*
+		 * To close sidebar if a menuItem is clicked. The event that opens next
+		 * view will be stored in TAG of view.
+		 * 
+		 * See onDrawerClosed for more INFO that handles to open a view.
+		 */
+		if (sidebar.isDrawerOpen(GravityCompat.START)) {
+			sidebar.closeDrawers();
+		} else {
+			sidebar.openDrawer(GravityCompat.START);
+		}
+	    sidebar.setTag(_e.getOpenEvent());
 	}
 
 	@Subscribe
