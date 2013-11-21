@@ -79,7 +79,10 @@ public final class MyMapFragment extends SupportMapFragment {
 	 */
 	@Subscribe
 	public void onUIShowAfterFinishMocking(UIShowAfterFinishMockingEvent _e) {
-		getMap().clear();
+		GoogleMap googleMap = getMap();
+		if( googleMap != null) {
+			googleMap.clear();
+		}
 	}
 
 	/**
@@ -87,7 +90,11 @@ public final class MyMapFragment extends SupportMapFragment {
 	 * **/
 	@Subscribe
 	public void onServiceLocationChanged(ServiceLocationChangedEvent _e) {
-		getMap().clear();
-		setMapLocation(getMap(), _e.getLocation().getLatitude(), _e.getLocation().getLongitude());
+		GoogleMap googleMap = getMap();
+		if( googleMap != null) {
+			Location location = _e.getLocation();
+			googleMap.clear();
+			setMapLocation(googleMap, location.getLatitude(),location.getLongitude());
+		}
 	}
 }
