@@ -14,6 +14,7 @@ import schedule.mock.data.DOGeometry;
 import schedule.mock.data.DOLatLng;
 import schedule.mock.data.DONearBy;
 import schedule.mock.data.DONearByResult;
+import schedule.mock.enums.MenuItem;
 import schedule.mock.events.UIPlaceListIsReadyEvent;
 import schedule.mock.events.UIShowGoogleMapEvent;
 import schedule.mock.events.UIShowPlaceListEvent;
@@ -45,9 +46,10 @@ import com.squareup.otto.Subscribe;
 
 
 public final class InputFragment extends BaseFragment implements View.OnClickListener, TextWatcher {
-
+	public static final String TAG = InputFragment.class.getName();
 	public static final int LAYOUT = R.layout.fragment_input;
 	private static final int REQUEST_CODE_VOICE_RECOGNITION = 1234;
+	public static final int MENU_POSITION = 1;
 	private DONearByResult[] mNearByResults;
 
 
@@ -333,6 +335,10 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 	}
 
+	@Override
+	public int getMenuItemPosition() {
+		return MENU_POSITION;
+	}
 
 	@Override
 	public void afterTextChanged(Editable s) {

@@ -29,6 +29,7 @@
 	<string name="menu_my_location">My Location</string>
 
 
+	<string name="menu_home">Home</string>
 	<string name="menu_input">Input</string>
 	<string name="menu_map">Map</string>
 	<string name="menu_history">History</string>

@@ -68,22 +68,36 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	protected void onCreate(Bundle _savedInstanceState) {
 		super.onCreate(_savedInstanceState);
 		setContentView(LAYOUT);
-		mPullToRefreshAttacher = PullToRefreshAttacher.get(this);
-		setRefreshableView(this);
+		initPull2LoadView();
 		if (_savedInstanceState == null) {
-			onShowHome(null);
+			initHome();
 		}
 		changeSwitchStatus(Prefs.getInstance().getMockStatus());
+		initSidebar();
+	}
 
+	private void initPull2LoadView() {
+		mPullToRefreshAttacher = PullToRefreshAttacher.get(this);
+		setRefreshableView(this);
+	}
+
+	private void initSidebar() {
 		DrawerLayout sidebar = (DrawerLayout) findViewById(R.id.sidebar);
 		sidebar.setDrawerListener(this);
 		mDrawerToggle = new ActionBarDrawerToggle(this, sidebar, R.drawable.ic_drawer, -1, -1);
 	}
 
+	private void initHome() {
+		getSupportFragmentManager().beginTransaction()
+				.replace(MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext()), HomeFragment.TAG)
+				.commit();
+	}
+
 	@Subscribe
 	public void onShowHome(UIShowHomeEvent _e) {
 		getSupportFragmentManager().beginTransaction()
-				.add(MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext())).commit();
+				.replace(MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext()))
+				.addToBackStack(HomeFragment.TAG).commit();
 	}
 
 	@Override
@@ -308,9 +322,9 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 				.beginTransaction()
 				.setCustomAnimations(R.anim.slide_in_from_down_to_top_fast, R.anim.no, R.anim.no,
 						R.anim.slide_out_from_top_to_down_fast)
-				.add(MAIN_CONTAINER,
+				.replace(MAIN_CONTAINER,
 						_location != null ? MyMapFragment.newInstance(_location, null) : MyMapFragment.newInstance())
-				.addToBackStack(null).commit();
+				.addToBackStack(MyMapFragment.TAG).commit();
 	}
 
 	/**
@@ -411,8 +425,8 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		getSupportFragmentManager()
 				.beginTransaction()
 				.setCustomAnimations(R.anim.slide_in_from_down_to_top_fast, R.anim.no, R.anim.no,
-						R.anim.slide_out_from_top_to_down_fast).add(MAIN_CONTAINER, InputFragment.newInstance(this))
-				.addToBackStack(null).commit();
+						R.anim.slide_out_from_top_to_down_fast)
+				.replace(MAIN_CONTAINER, InputFragment.newInstance(this)).addToBackStack(InputFragment.TAG).commit();
 	}
 
 	/***
@@ -445,7 +459,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		} else {
 			sidebar.openDrawer(GravityCompat.START);
 		}
-	    sidebar.setTag(_e.getOpenEvent());
+		sidebar.setTag(_e.getOpenEvent());
 	}
 
 	@Subscribe

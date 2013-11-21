@@ -12,13 +12,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.otto.Subscribe;
 
 import schedule.mock.events.ServiceLocationChangedEvent;
+import schedule.mock.events.UIHighlightMenuItemEvent;
 import schedule.mock.events.UIShowAfterFinishMockingEvent;
+import schedule.mock.interfaces.ICanOpenByMenuItem;
 import schedule.mock.tasks.net.GsonRequestTask;
 import schedule.mock.tasks.net.TaskHelper;
 import schedule.mock.utils.BusProvider;
 
-public final class MyMapFragment extends SupportMapFragment {
+public final class MyMapFragment extends SupportMapFragment implements ICanOpenByMenuItem {
 	public static final String TAG = MyMapFragment.class.getName();
+	public static final int MENU_POSITION = 2;
 	private static final int MEDIUM_ZOOM = 16;
 	private static final String EXTRAS_LAT = "extras.map.lat";
 	private static final String EXTRAS_LNG = "extras.map.lng";
@@ -88,6 +91,7 @@ public final class MyMapFragment extends SupportMapFragment {
 		if (_view != null) {
 			setUpMap(this);
 		}
+		BusProvider.getBus().post(new UIHighlightMenuItemEvent(getMenuItemPosition()));
 	}
 
 	/***
@@ -114,5 +118,10 @@ public final class MyMapFragment extends SupportMapFragment {
 			googleMap.clear();
 			setMapLocation(googleMap, location.getLatitude(), location.getLongitude());
 		}
+	}
+
+	@Override
+	public int getMenuItemPosition() {
+		return MENU_POSITION;
 	}
 }

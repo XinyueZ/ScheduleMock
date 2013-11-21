@@ -48,9 +48,9 @@ public final class MenuAdapter extends BaseAdapter {
 		}
 		MenuItem menuItem = mMenuItems[_position];
 		_convertView.setEnabled(menuItem.isEnable());
-//		_convertView.setSelected(!menuItem.isEnable());
 
-		holder.Text.setText(getItem(_position).toString());
+		holder.Text.setText(menuItem.getNameResId());
+		holder.Icon.setImageResource(menuItem.getIconResId());
 		return _convertView;
 	}
 
