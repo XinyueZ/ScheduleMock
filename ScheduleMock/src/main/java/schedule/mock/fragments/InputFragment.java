@@ -14,10 +14,10 @@ import schedule.mock.data.DOGeometry;
 import schedule.mock.data.DOLatLng;
 import schedule.mock.data.DONearBy;
 import schedule.mock.data.DONearByResult;
-import schedule.mock.enums.MenuItem;
 import schedule.mock.events.UIPlaceListIsReadyEvent;
 import schedule.mock.events.UIShowGoogleMapEvent;
 import schedule.mock.events.UIShowPlaceListEvent;
+import schedule.mock.events.VoiceInputEvent;
 import schedule.mock.fragments.dialog.PlaceListDialogFragment;
 import schedule.mock.prefs.Prefs;
 import schedule.mock.tasks.net.GsonRequestTask;
@@ -38,7 +38,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -51,10 +50,13 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 	private static final int REQUEST_CODE_VOICE_RECOGNITION = 1234;
 	public static final int MENU_POSITION = 1;
 	private DONearByResult[] mNearByResults;
+	public static final String EXTRAS_VOICE_INPUT = "extras.voice.input";
 
 
-	public static InputFragment newInstance(Context _context) {
-		return (InputFragment) InputFragment.instantiate(_context, InputFragment.class.getName());
+	public static InputFragment newInstance(Context _context, boolean _isVoiceInput) {
+		Bundle args = new Bundle();
+		args.putBoolean(EXTRAS_VOICE_INPUT, _isVoiceInput);
+		return (InputFragment) InputFragment.instantiate(_context, InputFragment.class.getName(), args);
 	}
 
 
@@ -69,7 +71,14 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 			location.setLongitude(Double.valueOf(prefs.getMockLng()));
 			BusProvider.getBus().post(new UIShowGoogleMapEvent(location));
 		} else {
-			startVoiceRecognitionActivityAndPayloadPlaces();
+			Bundle args = getArguments();
+			/*Open this view directly from home by clicking voice-input.*/
+			if( args != null) {
+				boolean isVoiceInput = getArguments().getBoolean(EXTRAS_VOICE_INPUT);
+				if(isVoiceInput) {
+					onVoiceInput(null);
+				}
+			}
 		}
 		return rootView;
 	}
@@ -81,8 +90,7 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		if (_view != null) {
 			View search = _view.findViewById(R.id.btn_search);
 			search.setOnClickListener(this);
-			ImageView voiceInput = (ImageView) _view.findViewById(R.id.btn_voice_input);
-			voiceInput.setOnClickListener(this);
+
 			/*
 			 * Any tap on street, city, country inputs the hidden text for
 			 * latlng will be cleared.
@@ -96,8 +104,8 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		}
 	}
 
-
-	private void startVoiceRecognitionActivityAndPayloadPlaces() {
+	@Subscribe
+	public void onVoiceInput(VoiceInputEvent _e) {
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 		intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getClass().getPackage().getName());
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -177,9 +185,9 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 			case R.id.btn_search:
 				searchInputPlaces();
 				break;
-			case R.id.btn_voice_input:
-				startVoiceRecognitionActivityAndPayloadPlaces();
-				break;
+//			case R.id.btn_voice_input:
+//				onVoiceInput();
+//				break;
 		}
 	}
 

@@ -40,6 +40,7 @@ import schedule.mock.events.UIShowLoadingEvent;
 import schedule.mock.events.UIShowMapEvent;
 import schedule.mock.events.UIShowNetworkImageEvent;
 import schedule.mock.events.UIShowOpenMockPermissionEvent;
+import schedule.mock.events.VoiceInputEvent;
 import schedule.mock.fragments.HomeFragment;
 import schedule.mock.fragments.InputFragment;
 import schedule.mock.fragments.MyMapFragment;
@@ -89,14 +90,13 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 
 	private void initHome() {
 		getSupportFragmentManager().beginTransaction()
-				.replace(MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext()), HomeFragment.TAG)
-				.commit();
+				.replace(MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext()), HomeFragment.TAG).commit();
 	}
 
 	@Subscribe
 	public void onShowHome(UIShowHomeEvent _e) {
 		getSupportFragmentManager().beginTransaction()
-				.replace(MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext()))
+				.replace(MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext()), HomeFragment.TAG)
 				.addToBackStack(HomeFragment.TAG).commit();
 	}
 
@@ -191,6 +191,8 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		return true;
 	}
 
+
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem _item) {
 		if (mDrawerToggle.onOptionsItemSelected(_item)) {
@@ -199,6 +201,15 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 			switch (_item.getItemId()) {
 			case R.id.menu_my_location:
 				findMyLocation();
+				return true;
+			case R.id.menu_voice_input:
+				if (findFragment(InputFragment.TAG)) {
+					/*Do not open 2nd input-view.*/
+					BusProvider.getBus().post(new VoiceInputEvent());
+				} else {
+					/*Open input-view and start voice-input.*/
+					onOpenInput(new UIShowInputEvent(true));
+				}
 				return true;
 			}
 		}
@@ -323,7 +334,8 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 				.setCustomAnimations(R.anim.slide_in_from_down_to_top_fast, R.anim.no, R.anim.no,
 						R.anim.slide_out_from_top_to_down_fast)
 				.replace(MAIN_CONTAINER,
-						_location != null ? MyMapFragment.newInstance(_location, null) : MyMapFragment.newInstance())
+						_location != null ? MyMapFragment.newInstance(_location, null) : MyMapFragment.newInstance(),
+						MyMapFragment.TAG)
 				.addToBackStack(MyMapFragment.TAG).commit();
 	}
 
@@ -421,12 +433,13 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	}
 
 	@Subscribe
-	public void openInput(UIShowInputEvent _e) {
+	public void onOpenInput(UIShowInputEvent _e) {
 		getSupportFragmentManager()
 				.beginTransaction()
 				.setCustomAnimations(R.anim.slide_in_from_down_to_top_fast, R.anim.no, R.anim.no,
 						R.anim.slide_out_from_top_to_down_fast)
-				.replace(MAIN_CONTAINER, InputFragment.newInstance(this)).addToBackStack(InputFragment.TAG).commit();
+				.replace(MAIN_CONTAINER, InputFragment.newInstance(this, _e.isVoiceInput()), InputFragment.TAG)
+				.addToBackStack(InputFragment.TAG).commit();
 	}
 
 	/***

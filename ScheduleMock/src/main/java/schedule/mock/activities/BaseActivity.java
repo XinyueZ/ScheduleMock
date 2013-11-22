@@ -1,6 +1,7 @@
 package schedule.mock.activities;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.ViewConfiguration;
 
@@ -45,4 +46,10 @@ public abstract class BaseActivity extends ActionBarActivity {
 			_e.printStackTrace();
 		}
 	}
+
+	protected boolean findFragment(String _tag) {
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		return fragmentManager.findFragmentByTag(_tag) != null;
+	}
+
 }
