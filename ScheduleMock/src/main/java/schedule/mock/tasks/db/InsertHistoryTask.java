@@ -3,9 +3,9 @@ package schedule.mock.tasks.db;
 
 import android.os.AsyncTask;
 
-import schedule.mock.db.AppDB;
+import schedule.mock.App;
 
-public final class InsertHistoryTask extends AsyncTask<AppDB, Void, Void>{
+public final class InsertHistoryTask extends AsyncTask<Void, Boolean, Boolean>{
 	private String mLatLng;
 	private String mName;
 
@@ -15,10 +15,7 @@ public final class InsertHistoryTask extends AsyncTask<AppDB, Void, Void>{
 	}
 
 	@Override
-	protected Void doInBackground(AppDB... _params) {
-		AppDB db = _params[0];
-		db.insertHistory(mLatLng, mName);
-		db = null;
-		return null;
+	protected Boolean doInBackground(Void... _params) {
+		return App.getDB().insertHistory(mLatLng, mName);
 	}
 }

@@ -13,45 +13,47 @@ import schedule.mock.data.DOHistoryRecorder;
 import schedule.mock.db.tables.TblHistory;
 
 public final class AppDB {
+	private DatabaseHelper mHelper;
 
-	private static volatile AppDB sInstance;
-	private final SQLiteDatabase mDB;
-	private final Context mContext;
-
-	private AppDB(Context _context) {
-		DatabaseHelper dh = new DatabaseHelper(_context);
-		mDB = dh.getReadableDatabase();
-		mContext = _context;
-	}
-
-	public synchronized static AppDB getInstance(Context _context) {
-		if (sInstance == null) {
-			sInstance = new AppDB(_context);
-		}
-		return sInstance;
+	public AppDB(Context _context) {
+		mHelper = new DatabaseHelper(_context);
 	}
 
 	public synchronized boolean insertHistory(String _latlng, String _name) {
 		long rowId = -1;
-		Cursor c = mDB.rawQuery(TblHistory.STMT_SELECT_BY_LATLNG, new String[] { _latlng });
-		if (c.getCount() < 1) {
-			SQLiteStatement stm = mDB.compileStatement(TblHistory.STMT_INSERT);
-			stm.bindString(1, _latlng);
-			stm.bindString(2, _name);
-			stm.bindLong(3, System.currentTimeMillis());
-			rowId = stm.executeInsert();
-			stm.clearBindings();
-			stm.releaseReference();
+		SQLiteDatabase DB = mHelper.getWritableDatabase();
+		Cursor c = null;
+		try {
+			assert DB != null;
+			c = DB.rawQuery(TblHistory.STMT_SELECT_BY_LATLNG, new String[] { _latlng });
+			if (c.getCount() < 1) {
+				SQLiteStatement stm = DB.compileStatement(TblHistory.STMT_INSERT);
+				assert stm != null;
+				stm.bindString(1, _latlng);
+				stm.bindString(2, _name);
+				stm.bindLong(3, System.currentTimeMillis());
+				rowId = stm.executeInsert();
+				stm.clearBindings();
+				stm.releaseReference();
+			}
+		} catch (Exception _e) {
+			_e.printStackTrace();
+		} finally {
+			assert c != null;
+			c.close();
+			assert DB != null;
+			DB.close();
 		}
-		c.close();
 		return rowId != -1;
 	}
 
 	public synchronized List<DOHistoryRecorder> getHistoryList() {
 		List<DOHistoryRecorder> results = null;
+		SQLiteDatabase DB = mHelper.getReadableDatabase();
 		Cursor c = null;
 		try {
-			c = mDB.rawQuery(TblHistory.STMT_SELECT_ALL, null);
+			assert DB != null;
+			c = DB.rawQuery(TblHistory.STMT_SELECT_ALL, null);
 			int count = c.getCount();
 			results = new ArrayList<DOHistoryRecorder>(count);
 			DOHistoryRecorder item = null;
@@ -61,22 +63,36 @@ public final class AppDB {
 				results.add(item);
 			}
 		} catch (Exception _e) {
+			_e.printStackTrace();
 		} finally {
-			if (c != null) {
-				c.close();
-			}
+			assert c != null;
+			c.close();
+			assert DB != null;
+			DB.close();
 		}
 		return results;
 	}
 
 	public synchronized boolean deleteHistoryByLatLng(String _latlng) {
 		int count = 0;
+		SQLiteDatabase DB = mHelper.getWritableDatabase();
 		if (!TextUtils.isEmpty(_latlng)) {
-			Cursor c = mDB.rawQuery(TblHistory.STMT_SELECT_BY_LATLNG, new String[] { _latlng });
-			if (c.getCount() > 0) {
-				count = mDB.delete(TblHistory.TABLE_NAME, TblHistory.COL_LATLNG + "=?", new String[] { _latlng });
+			Cursor c = null;
+			try {
+				assert DB != null;
+				c = DB.rawQuery(TblHistory.STMT_SELECT_BY_LATLNG, new String[] { _latlng });
+				if (c.getCount() > 0) {
+					count = DB.delete(TblHistory.TABLE_NAME, TblHistory.COL_LATLNG + "=?", new String[] { _latlng });
+				}
+				c.close();
+			} catch (Exception _e) {
+				_e.printStackTrace();
+			} finally {
+				assert c != null;
+				c.close();
+				assert DB != null;
+				DB.close();
 			}
-			c.close();
 		}
 		return count > 0;
 	}

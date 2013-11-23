@@ -26,8 +26,8 @@ import schedule.mock.R;
 import schedule.mock.data.DOGeocodeFromLatLng;
 import schedule.mock.data.DOGeocodeResult;
 import schedule.mock.data.DOLatLng;
-import schedule.mock.db.AppDB;
 import schedule.mock.events.CutMockingEvent;
+import schedule.mock.events.FindMyLocationEvent;
 import schedule.mock.events.ServiceLocationChangedEvent;
 import schedule.mock.events.StartLocationMockTrackingEvent;
 import schedule.mock.events.UICloseSidebarEvent;
@@ -206,7 +206,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		} else {
 			switch (_item.getItemId()) {
 			case R.id.menu_my_location:
-				findMyLocation();
+				findMyLocation(null);
 				return true;
 			case R.id.menu_voice_input:
 				if (findFragment(InputFragment.TAG)) {
@@ -348,7 +348,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 				.setCustomAnimations(R.anim.slide_in_from_down_to_top_fast, R.anim.no, R.anim.no,
 						R.anim.slide_out_from_top_to_down_fast)
 				.replace(MAIN_CONTAINER,
-						isMocking ? MyMapFragment.newInstance(location, null) : (location != null ? MyMapFragment.newInstance(location, null) : MyMapFragment.newInstance()),
+						location != null ? MyMapFragment.newInstance(location, null) : MyMapFragment.newInstance(),
 						MyMapFragment.TAG).addToBackStack(MyMapFragment.TAG).commit();
 	}
 
@@ -397,7 +397,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 			startLocationProcess(intent);
 
 			/* Insert history to DB. */
-			new InsertHistoryTask(location.toString(), name).execute(AppDB.getInstance(getApplicationContext()));
+			new InsertHistoryTask(location.toString(), name).execute( );
 		}
 	}
 
@@ -405,7 +405,8 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	 * Only place to find my current location. Against to
 	 * onStartLocationMockTracking to mock location.
 	 */
-	private void findMyLocation() {
+	@Subscribe
+	public void findMyLocation(FindMyLocationEvent _e) {
 		if (Prefs.getInstance().getMockStatus()) {
 			/* In mock-status should stop mocking first. */
 			AskCuttingMockDialogFragment.showInstance(this);
@@ -470,7 +471,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		/* Stop mocking location for some reasons manually. */
 		if (mCuttingMock) {
 			mCuttingMock = false;
-			findMyLocation();
+			findMyLocation(null);
 		}
 	}
 

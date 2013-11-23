@@ -60,7 +60,7 @@ public final class GsonRequestTask<T> extends Request<T> {
 	private static void logError(VolleyError _error) {
 		NetworkResponse response = _error.networkResponse;
 		Map<String, String> headers = response.headers;
-		if (headers.size() > 0) {
+		if (headers != null && headers.size() > 0) {
 			Set<String> keys = headers.keySet();
 			LL.e(new StringBuilder().append("Status ").append(response.statusCode).toString());
 			for (String key : keys) {

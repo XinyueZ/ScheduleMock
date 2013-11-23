@@ -2,6 +2,7 @@ package schedule.mock;
 
 import android.app.Application;
 
+import schedule.mock.db.AppDB;
 import schedule.mock.prefs.Prefs;
 import schedule.mock.tasks.net.TaskHelper;
 
@@ -19,16 +20,23 @@ public final class App extends Application {
 	public static final String API_GEOCODE_FROM_ADDRESS = "http://maps.google.com/maps/api/geocode/json?address=%s&sensor=false&language=%s";
 	public static final String API_GEOCODE_FROM_LAT_LNG = "http://maps.google.com/maps/api/geocode/json?latlng=%s&sensor=false&language=%s";
 
+	private static AppDB sDB;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		init();
+
 	}
 
 
 	private void init() {
 		Prefs.createInstance(getApplicationContext());
 		TaskHelper.init(getApplicationContext());
+		sDB = new AppDB(this);
+	}
+
+	public static AppDB getDB() {
+		return sDB;
 	}
 }

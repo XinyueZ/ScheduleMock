@@ -5,16 +5,16 @@ import android.os.AsyncTask;
 
 import java.util.List;
 
+import schedule.mock.App;
 import schedule.mock.data.DOHistoryRecorder;
-import schedule.mock.db.AppDB;
 import schedule.mock.events.UIShowLoadingCompleteEvent;
 import schedule.mock.events.UIShowLoadingEvent;
 import schedule.mock.utils.BusProvider;
 
-public abstract class LoadHistoryTask extends AsyncTask<AppDB, List<DOHistoryRecorder>, List<DOHistoryRecorder>> {
+public abstract class LoadHistoryTask extends AsyncTask<Void, List<DOHistoryRecorder>, List<DOHistoryRecorder>> {
 	private Context mContext;
 
-	protected LoadHistoryTask(Context _context) {
+	public LoadHistoryTask(Context _context) {
 		mContext = _context;
 	}
 
@@ -25,9 +25,8 @@ public abstract class LoadHistoryTask extends AsyncTask<AppDB, List<DOHistoryRec
 	}
 
 	@Override
-	protected List<DOHistoryRecorder> doInBackground(AppDB... _params) {
-		AppDB db = _params[0];
-		return db.getHistoryList();
+	protected List<DOHistoryRecorder> doInBackground(Void ... _params) {
+		return App.getDB().getHistoryList();
 	}
 
 	@Override
@@ -35,8 +34,8 @@ public abstract class LoadHistoryTask extends AsyncTask<AppDB, List<DOHistoryRec
 		if (_historyRecorders != null) {
 			onShowList(mContext, _historyRecorders);
 			super.onPostExecute(_historyRecorders);
-			BusProvider.getBus().post(new UIShowLoadingCompleteEvent());
 		}
+		BusProvider.getBus().post(new UIShowLoadingCompleteEvent());
 	}
 
 	protected abstract void onShowList(Context _context, List<DOHistoryRecorder> _historyRecorders);

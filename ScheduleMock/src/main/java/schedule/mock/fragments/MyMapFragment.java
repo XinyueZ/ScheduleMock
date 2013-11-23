@@ -11,6 +11,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.otto.Subscribe;
 
+import schedule.mock.events.FindMyLocationEvent;
 import schedule.mock.events.ServiceLocationChangedEvent;
 import schedule.mock.events.UIHighlightMenuItemEvent;
 import schedule.mock.events.UIShowAfterFinishMockingEvent;
@@ -66,6 +67,8 @@ public final class MyMapFragment extends SupportMapFragment implements ICanOpenB
 			Location location = googleMap.getMyLocation();
 			if (location != null) {
 				setMapLocation(googleMap, location.getLatitude(), location.getLongitude());
+			} else {
+				BusProvider.getBus().post(new FindMyLocationEvent());
 			}
 		}
 	}

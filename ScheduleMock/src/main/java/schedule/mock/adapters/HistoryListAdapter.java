@@ -23,7 +23,7 @@ import schedule.mock.utils.LL;
 
 public final class HistoryListAdapter extends BaseAdapter {
 
-	private static final int LAYOUT = R.layout.entry_history_list;
+	private static final int LAYOUT = R.layout.entry_history;
 	private Context mContext;
 	private List<DOHistoryRecorder> mRecorder;
 
@@ -58,7 +58,7 @@ public final class HistoryListAdapter extends BaseAdapter {
 		final DOHistoryRecorder nearByResult = mRecorder.get(_position);
 		if (_convertView == null) {
 			_convertView = View.inflate(mContext, LAYOUT, null);
-			holder = new ViewHolder((NetworkImageView) _convertView.findViewById(R.id.iv_place_icon),
+			holder = new ViewHolder(
 					(TextView) _convertView.findViewById(R.id.tv_place_name),
 					(TextView) _convertView.findViewById(R.id.tv_geolocation),
 					(NetworkImageView) _convertView.findViewById(R.id.iv_place_preview));
@@ -101,16 +101,13 @@ public final class HistoryListAdapter extends BaseAdapter {
 
 	static class ViewHolder {
 
-		NetworkImageView PlaceIcon;
 		TextView PlaceName;
 		TextView Geolocation;
 		NetworkImageView PlacePreview;
 
 
-		ViewHolder(NetworkImageView _placeIcon, TextView _placeName, TextView _geolocation,
+		ViewHolder( TextView _placeName, TextView _geolocation,
 				NetworkImageView _placePreview) {
-			PlaceIcon = _placeIcon;
-			PlaceIcon.setVisibility(View.GONE);
 			PlaceName = _placeName;
 			Geolocation = _geolocation;
 			PlacePreview = _placePreview;

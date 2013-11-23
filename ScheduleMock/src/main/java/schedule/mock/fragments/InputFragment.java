@@ -15,7 +15,6 @@ import schedule.mock.data.DOLatLng;
 import schedule.mock.data.DONearBy;
 import schedule.mock.data.DONearByResult;
 import schedule.mock.events.UIPlaceListIsReadyEvent;
-import schedule.mock.events.UIShowGoogleMapEvent;
 import schedule.mock.events.UIShowPlaceListEvent;
 import schedule.mock.events.VoiceInputEvent;
 import schedule.mock.fragments.dialog.PlaceListDialogFragment;
@@ -28,7 +27,6 @@ import schedule.mock.utils.Utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
@@ -43,15 +41,19 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.squareup.otto.Subscribe;
 
-
 public final class InputFragment extends BaseFragment implements View.OnClickListener, TextWatcher {
 	public static final String TAG = InputFragment.class.getName();
 	public static final int LAYOUT = R.layout.fragment_input;
-	private static final int REQUEST_CODE_VOICE_RECOGNITION = 1234;
 	public static final int MENU_POSITION = 1;
-	private DONearByResult[] mNearByResults;
 	public static final String EXTRAS_VOICE_INPUT = "extras.voice.input";
-
+	private static final int REQUEST_CODE_VOICE_RECOGNITION = 1234;
+	private static final String EXTRAS_STREET = "extras.street";
+	private static final String EXTRAS_CITY = "extras.city";
+	private static final String EXTRAS_COUNTRY = "extras.country";
+	private DONearByResult[] mNearByResults;
+	private String mStreet = "";
+	private String mCity = "";
+	private String mCountry = "";
 
 	public static InputFragment newInstance(Context _context, boolean _isVoiceInput) {
 		Bundle args = new Bundle();
@@ -59,30 +61,42 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		return (InputFragment) InputFragment.instantiate(_context, InputFragment.class.getName(), args);
 	}
 
-
 	@Override
 	public View onCreateView(LayoutInflater _inflater, ViewGroup _container, Bundle _savedInstanceState) {
 		View rootView = _inflater.inflate(LAYOUT, _container, false);
 		Prefs prefs = Prefs.getInstance();
-		if( prefs.getMockStatus() ) {
-			/*Show map for being in mocking status directly.*/
-			Location location = new Location("mock");
-			location.setLatitude(Double.valueOf(prefs.getMockLat()));
-			location.setLongitude(Double.valueOf(prefs.getMockLng()));
-			BusProvider.getBus().post(new UIShowGoogleMapEvent(location));
-		} else {
-			Bundle args = getArguments();
-			/*Open this view directly from home by clicking voice-input.*/
-			if( args != null) {
-				boolean isVoiceInput = getArguments().getBoolean(EXTRAS_VOICE_INPUT);
-				if(isVoiceInput) {
-					onVoiceInput(null);
-				}
+
+		Bundle args = getArguments();
+		/* Open this view directly from home by clicking voice-input. */
+		if (args != null) {
+			boolean isVoiceInput = getArguments().getBoolean(EXTRAS_VOICE_INPUT);
+			if (isVoiceInput) {
+				onVoiceInput(null);
 			}
 		}
+
+		if( _savedInstanceState != null ) {
+			mStreet = _savedInstanceState.getString(EXTRAS_STREET);
+			mCity = _savedInstanceState.getString(EXTRAS_CITY);
+			mCountry = _savedInstanceState.getString(EXTRAS_COUNTRY);
+		}
+		EditText street = (EditText) rootView.findViewById(R.id.et_mocked_street_name);
+		EditText city = (EditText) rootView.findViewById(R.id.et_mocked_city_name);
+		EditText country = (EditText) rootView.findViewById(R.id.et_mocked_county_name);
+		street.setText(mStreet);
+		city.setText(mCity );
+		country.setText(mCountry );
+
 		return rootView;
 	}
 
+	@Override
+	public void onSaveInstanceState(Bundle _outState) {
+		super.onSaveInstanceState(_outState);
+		_outState.putString(EXTRAS_STREET, mStreet);
+		_outState.putString(EXTRAS_CITY, mCity);
+		_outState.putString(EXTRAS_COUNTRY, mCountry);
+	}
 
 	@Override
 	public void onViewCreated(View _view, Bundle _savedInstanceState) {
@@ -114,29 +128,27 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		startActivityForResult(intent, REQUEST_CODE_VOICE_RECOGNITION);
 	}
 
-
 	@Override
 	public void onActivityResult(int _requestCode, int _resultCode, Intent _data) {
 		switch (_requestCode) {
-			case REQUEST_CODE_VOICE_RECOGNITION:
-				/*
-				 * Voice input for search location.
-				 */
-				if (_resultCode == Activity.RESULT_OK) {
-					ArrayList<String> matches = _data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-					if (matches != null) {
-						/*
-						 * Try to validate the voice-input address.
-						 */
-						clearHiddenLatLng();
-						searchVoicePlace(matches.get(0));
-					}
+		case REQUEST_CODE_VOICE_RECOGNITION:
+			/*
+			 * Voice input for search location.
+			 */
+			if (_resultCode == Activity.RESULT_OK) {
+				ArrayList<String> matches = _data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+				if (matches != null) {
+					/*
+					 * Try to validate the voice-input address.
+					 */
+					clearHiddenLatLng();
+					searchVoicePlace(matches.get(0));
 				}
-				break;
+			}
+			break;
 		}
 		super.onActivityResult(_requestCode, _resultCode, _data);
 	}
-
 
 	/**
 	 * Get near-by places through voice input. To find latlng then fill boxes of
@@ -153,7 +165,6 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		new GsonRequestTask<DOGecodeFromVoiceAddress>(getActivity().getApplicationContext(), Request.Method.GET,
 				url.trim(), DOGecodeFromVoiceAddress.class).execute();
 	}
-
 
 	/**
 	 * Get near-by from boxes. To find latlng first and finish.
@@ -178,19 +189,17 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		}
 	}
 
-
 	@Override
 	public void onClick(View _view) {
 		switch (_view.getId()) {
-			case R.id.btn_search:
-				searchInputPlaces();
-				break;
-//			case R.id.btn_voice_input:
-//				onVoiceInput();
-//				break;
+		case R.id.btn_search:
+			searchInputPlaces();
+			break;
+		// case R.id.btn_voice_input:
+		// onVoiceInput();
+		// break;
 		}
 	}
-
 
 	/**
 	 * Finished converting from address to latlng(Geocode job). Directly to find
@@ -215,7 +224,6 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		}
 	}
 
-
 	/**
 	 * Find the list of near-by which could be mocked late.
 	 */
@@ -225,7 +233,6 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		LL.d("Start place near-by:" + url);
 		new GsonRequestTask<DONearBy>(_ctx, Request.Method.GET, url, DONearBy.class).execute();
 	}
-
 
 	/**
 	 * Finished loading near-by places.
@@ -241,7 +248,6 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		}
 	}
 
-
 	/**
 	 * UI is ready showing near-by places, and we push data onto it.
 	 * 
@@ -250,7 +256,6 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 	public void onPlaceListIsReady(UIPlaceListIsReadyEvent _e) {
 		BusProvider.getBus().post(new UIShowPlaceListEvent(mNearByResults));
 	}
-
 
 	/**
 	 * Get translated string of Geocode from latlng, it is the handler for
@@ -266,7 +271,6 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 			}
 		}
 	}
-
 
 	/**
 	 * Get translated string of Geocode from latlng, it is the handler for
@@ -286,7 +290,6 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		}
 	}
 
-
 	/**
 	 * Fill in all location information onto street, city, country....
 	 * Radar-search and voice input need this to translate and validate.
@@ -303,9 +306,9 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 				EditText street = (EditText) view.findViewById(R.id.et_mocked_street_name);
 				EditText city = (EditText) view.findViewById(R.id.et_mocked_city_name);
 				EditText country = (EditText) view.findViewById(R.id.et_mocked_county_name);
-				street.setText(geocodedAddress.getStreet());
-				city.setText(geocodedAddress.getCity());
-				country.setText(geocodedAddress.getCountry());
+				street.setText(mStreet = geocodedAddress.getStreet());
+				city.setText(mCity = geocodedAddress.getCity());
+				country.setText(mCountry = geocodedAddress.getCountry());
 			}
 			if (geometry != null && geometry.getLocation() != null) {
 				DOLatLng latLng = geometry.getLocation();
@@ -315,7 +318,6 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		}
 		return null;
 	}
-
 
 	/**
 	 * Show debug info(latlng) on textview.
@@ -333,11 +335,9 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		}
 	}
 
-
 	@Override
 	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 	}
-
 
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -352,7 +352,6 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 	public void afterTextChanged(Editable s) {
 		clearHiddenLatLng();
 	}
-
 
 	/**
 	 * Help method that clear latlng in debug-box.

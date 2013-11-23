@@ -2,6 +2,8 @@ package schedule.mock.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +15,6 @@ import java.util.List;
 import schedule.mock.R;
 import schedule.mock.adapters.HistoryListAdapter;
 import schedule.mock.data.DOHistoryRecorder;
-import schedule.mock.db.AppDB;
 import schedule.mock.tasks.db.LoadHistoryTask;
 
 public final class HistoryListFragment extends BaseFragment {
@@ -37,15 +38,15 @@ public final class HistoryListFragment extends BaseFragment {
 	}
 
 	@Override
-	public void onViewCreated(View _view, Bundle _savedInstanceState) {
-		super.onViewCreated(_view, _savedInstanceState);
+	public void onActivityCreated(Bundle _savedInstanceState) {
+		super.onActivityCreated(_savedInstanceState);
 		showList();
 	}
 
 	private void showList() {
 		Activity activity = getActivity();
 		if (activity != null) {
-			new LoadHistoryTask(activity.getApplicationContext()) {
+			LoadHistoryTask task = new LoadHistoryTask(activity.getApplicationContext()) {
 				@Override
 				protected void onShowList(Context _context, List<DOHistoryRecorder> _historyRecorders) {
 					View view = getView();
@@ -54,7 +55,13 @@ public final class HistoryListFragment extends BaseFragment {
 						listView.setAdapter(new HistoryListAdapter(_context, _historyRecorders));
 					}
 				}
-			}.execute(AppDB.getInstance(activity.getApplicationContext()));
+			};
+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+				task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
+			} else {
+				task.execute();
+			}
 		}
 	}
 }
