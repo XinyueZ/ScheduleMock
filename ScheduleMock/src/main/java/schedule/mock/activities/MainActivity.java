@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.location.Location;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -336,9 +338,9 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	public void onShowMap(UIShowMapEvent _e) {
 		Prefs prefs = Prefs.getInstance();
 		Location location = _e.getLocation();
-		/*In mocking status.*/
+		/* In mocking status. */
 		boolean isMocking = prefs.getMockStatus();
-		if(isMocking) {
+		if (isMocking) {
 			location = new Location("mock");
 			location.setLatitude(Double.valueOf(prefs.getMockLat()));
 			location.setLongitude(Double.valueOf(prefs.getMockLng()));
@@ -397,7 +399,12 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 			startLocationProcess(intent);
 
 			/* Insert history to DB. */
-			new InsertHistoryTask(location.toString(), name).execute( );
+			InsertHistoryTask task = new InsertHistoryTask(location.toString(), name);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+				task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
+			} else {
+				task.execute();
+			}
 		}
 	}
 
@@ -497,12 +504,12 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		changeSwitchStatus(false);
 	}
 
-
 	@Subscribe
 	public void onUIShowHistory(UIShowHistoryEvent _e) {
-		getSupportFragmentManager().beginTransaction()
-				.replace(MAIN_CONTAINER, HistoryListFragment.newInstance(getApplicationContext()), HistoryListFragment.TAG)
-				.addToBackStack(HistoryListFragment.TAG).commit();
+		getSupportFragmentManager()
+				.beginTransaction()
+				.replace(MAIN_CONTAINER, HistoryListFragment.newInstance(getApplicationContext()),
+						HistoryListFragment.TAG).addToBackStack(HistoryListFragment.TAG).commit();
 	}
 
 	@Subscribe
@@ -511,7 +518,6 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 				.replace(MAIN_CONTAINER, ScheduleFragment.newInstance(getApplicationContext()), ScheduleFragment.TAG)
 				.addToBackStack(ScheduleFragment.TAG).commit();
 	}
-
 
 	@Subscribe
 	public void onUIShowGPlus(UIShowGPlusEvent _e) {
