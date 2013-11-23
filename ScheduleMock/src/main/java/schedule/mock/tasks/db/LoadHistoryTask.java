@@ -2,6 +2,7 @@ package schedule.mock.tasks.db;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 
 import java.util.List;
 
@@ -36,6 +37,14 @@ public abstract class LoadHistoryTask extends AsyncTask<Void, List<DOHistoryReco
 			super.onPostExecute(_historyRecorders);
 		}
 		BusProvider.getBus().post(new UIShowLoadingCompleteEvent());
+	}
+
+	public void exec(){
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
+		} else {
+			execute();
+		}
 	}
 
 	protected abstract void onShowList(Context _context, List<DOHistoryRecorder> _historyRecorders);

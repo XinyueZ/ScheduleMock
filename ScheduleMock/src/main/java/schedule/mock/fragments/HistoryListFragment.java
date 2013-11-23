@@ -2,8 +2,6 @@ package schedule.mock.fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,7 +44,7 @@ public final class HistoryListFragment extends BaseFragment {
 	private void showList() {
 		Activity activity = getActivity();
 		if (activity != null) {
-			LoadHistoryTask task = new LoadHistoryTask(activity.getApplicationContext()) {
+			new LoadHistoryTask(activity.getApplicationContext()) {
 				@Override
 				protected void onShowList(Context _context, List<DOHistoryRecorder> _historyRecorders) {
 					View view = getView();
@@ -55,13 +53,8 @@ public final class HistoryListFragment extends BaseFragment {
 						listView.setAdapter(new HistoryListAdapter(_context, _historyRecorders));
 					}
 				}
-			};
+			}.exec();
 
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
-			} else {
-				task.execute();
-			}
 		}
 	}
 }

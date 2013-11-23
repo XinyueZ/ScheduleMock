@@ -4,8 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.location.Location;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -399,12 +397,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 			startLocationProcess(intent);
 
 			/* Insert history to DB. */
-			InsertHistoryTask task = new InsertHistoryTask(location.toString(), name);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
-			} else {
-				task.execute();
-			}
+			new InsertHistoryTask(location.toString(), name).exec();
 		}
 	}
 
