@@ -99,6 +99,7 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".fragments.dialog.YesNoDialogFragment"/>
+		<activity android:name=".activities.HistoryActivity"/>
 
 		<service android:name=".services.StartLocationTrackingService"/>
 	</application>

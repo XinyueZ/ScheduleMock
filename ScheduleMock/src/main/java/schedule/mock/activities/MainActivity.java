@@ -26,13 +26,16 @@ import schedule.mock.R;
 import schedule.mock.data.DOGeocodeFromLatLng;
 import schedule.mock.data.DOGeocodeResult;
 import schedule.mock.data.DOLatLng;
+import schedule.mock.db.AppDB;
 import schedule.mock.events.CutMockingEvent;
 import schedule.mock.events.ServiceLocationChangedEvent;
 import schedule.mock.events.StartLocationMockTrackingEvent;
 import schedule.mock.events.UICloseSidebarEvent;
 import schedule.mock.events.UIShowAfterFinishMockingEvent;
 import schedule.mock.events.UIShowCanNotMockLocationEvent;
+import schedule.mock.events.UIShowGPlusEvent;
 import schedule.mock.events.UIShowGoogleMapEvent;
+import schedule.mock.events.UIShowHistoryEvent;
 import schedule.mock.events.UIShowHomeEvent;
 import schedule.mock.events.UIShowInputEvent;
 import schedule.mock.events.UIShowLoadingCompleteEvent;
@@ -40,14 +43,19 @@ import schedule.mock.events.UIShowLoadingEvent;
 import schedule.mock.events.UIShowMapEvent;
 import schedule.mock.events.UIShowNetworkImageEvent;
 import schedule.mock.events.UIShowOpenMockPermissionEvent;
+import schedule.mock.events.UIShowScheduleEvent;
 import schedule.mock.events.VoiceInputEvent;
+import schedule.mock.fragments.GPlusFragment;
+import schedule.mock.fragments.HistoryListFragment;
 import schedule.mock.fragments.HomeFragment;
 import schedule.mock.fragments.InputFragment;
 import schedule.mock.fragments.MyMapFragment;
+import schedule.mock.fragments.ScheduleFragment;
 import schedule.mock.fragments.dialog.AskCuttingMockDialogFragment;
 import schedule.mock.fragments.dialog.ImageDialogFragment;
 import schedule.mock.prefs.Prefs;
 import schedule.mock.services.StartLocationTrackingService;
+import schedule.mock.tasks.db.InsertHistoryTask;
 import schedule.mock.tasks.net.GsonRequestTask;
 import schedule.mock.utils.BusProvider;
 import schedule.mock.utils.DisplayUtil;
@@ -191,8 +199,6 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		return true;
 	}
 
-
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem _item) {
 		if (mDrawerToggle.onOptionsItemSelected(_item)) {
@@ -204,10 +210,10 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 				return true;
 			case R.id.menu_voice_input:
 				if (findFragment(InputFragment.TAG)) {
-					/*Do not open 2nd input-view.*/
+					/* Do not open 2nd input-view. */
 					BusProvider.getBus().post(new VoiceInputEvent());
 				} else {
-					/*Open input-view and start voice-input.*/
+					/* Open input-view and start voice-input. */
 					onOpenInput(new UIShowInputEvent(true));
 				}
 				return true;
@@ -328,15 +334,22 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 
 	@Subscribe
 	public void onShowMap(UIShowMapEvent _e) {
-		Location _location = _e.getLocation();
+		Prefs prefs = Prefs.getInstance();
+		Location location = _e.getLocation();
+		/*In mocking status.*/
+		boolean isMocking = prefs.getMockStatus();
+		if(isMocking) {
+			location = new Location("mock");
+			location.setLatitude(Double.valueOf(prefs.getMockLat()));
+			location.setLongitude(Double.valueOf(prefs.getMockLng()));
+		}
 		getSupportFragmentManager()
 				.beginTransaction()
 				.setCustomAnimations(R.anim.slide_in_from_down_to_top_fast, R.anim.no, R.anim.no,
 						R.anim.slide_out_from_top_to_down_fast)
 				.replace(MAIN_CONTAINER,
-						_location != null ? MyMapFragment.newInstance(_location, null) : MyMapFragment.newInstance(),
-						MyMapFragment.TAG)
-				.addToBackStack(MyMapFragment.TAG).commit();
+						isMocking ? MyMapFragment.newInstance(location, null) : (location != null ? MyMapFragment.newInstance(location, null) : MyMapFragment.newInstance()),
+						MyMapFragment.TAG).addToBackStack(MyMapFragment.TAG).commit();
 	}
 
 	/**
@@ -346,16 +359,16 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	public void onDOGeocodeSuccess(DOGeocodeFromLatLng _geocode) {
 		if (_geocode != null) {
 			View customView = getSupportActionBar().getCustomView();
-			TextView currentLoction = (TextView) customView.findViewById(R.id.tv_current_location);
+			TextView currentLocation = (TextView) customView.findViewById(R.id.tv_current_location);
 			DOGeocodeResult[] results = _geocode.getGeocodeResults();
 			if (results != null && results.length > 0) {
 				DOGeocodeResult result = results[0];
 				String fullAddress = result.getFullAddress();
-				currentLoction.setText(fullAddress);
+				currentLocation.setText(fullAddress);
 
 				/* Store current location to address text-view. */
-				currentLoction.setTag(result);
-				currentLoction.setOnClickListener(this);
+				currentLocation.setTag(result);
+				currentLocation.setOnClickListener(this);
 			}
 		}
 	}
@@ -382,6 +395,9 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 			intent.putExtra(StartLocationTrackingService.EXTRAS_MOCK_LNG, location.getLongitude());
 			intent.putExtra(StartLocationTrackingService.EXTRAS_MOCK_NAME, name);
 			startLocationProcess(intent);
+
+			/* Insert history to DB. */
+			new InsertHistoryTask(location.toString(), name).execute(AppDB.getInstance(getApplicationContext()));
 		}
 	}
 
@@ -478,6 +494,29 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	@Subscribe
 	public void onUIShowCanNotMockLocation(UIShowCanNotMockLocationEvent _e) {
 		changeSwitchStatus(false);
+	}
+
+
+	@Subscribe
+	public void onUIShowHistory(UIShowHistoryEvent _e) {
+		getSupportFragmentManager().beginTransaction()
+				.replace(MAIN_CONTAINER, HistoryListFragment.newInstance(getApplicationContext()), HistoryListFragment.TAG)
+				.addToBackStack(HistoryListFragment.TAG).commit();
+	}
+
+	@Subscribe
+	public void onUIShowSchedule(UIShowScheduleEvent _e) {
+		getSupportFragmentManager().beginTransaction()
+				.replace(MAIN_CONTAINER, ScheduleFragment.newInstance(getApplicationContext()), ScheduleFragment.TAG)
+				.addToBackStack(ScheduleFragment.TAG).commit();
+	}
+
+
+	@Subscribe
+	public void onUIShowGPlus(UIShowGPlusEvent _e) {
+		getSupportFragmentManager().beginTransaction()
+				.replace(MAIN_CONTAINER, GPlusFragment.newInstance(getApplicationContext()), GPlusFragment.TAG)
+				.addToBackStack(GPlusFragment.TAG).commit();
 	}
 
 	@Subscribe

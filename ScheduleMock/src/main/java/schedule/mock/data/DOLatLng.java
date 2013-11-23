@@ -24,4 +24,9 @@ public final class DOLatLng {
 	public void setLongitude(double _longitude) {
 		mLongitude = _longitude;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("%s,%s", "" + getLatitude(), "" + getLongitude());
+	}
 }
