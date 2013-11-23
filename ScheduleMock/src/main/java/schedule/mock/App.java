@@ -3,6 +3,7 @@ package schedule.mock;
 import android.app.Application;
 
 import schedule.mock.db.AppDB;
+import schedule.mock.enums.MenuItem;
 import schedule.mock.prefs.Prefs;
 import schedule.mock.tasks.net.TaskHelper;
 
@@ -22,6 +23,10 @@ public final class App extends Application {
 
 	private static AppDB sDB;
 
+
+
+	private static MenuItem sSelectedMenuItem;
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -38,5 +43,13 @@ public final class App extends Application {
 
 	public static AppDB getDB() {
 		return sDB;
+	}
+
+	public static MenuItem getSelectedMenuItem() {
+		return sSelectedMenuItem;
+	}
+
+	public static void setSelectedMenuItem(MenuItem _selectedMenuItem) {
+		sSelectedMenuItem = _selectedMenuItem;
 	}
 }

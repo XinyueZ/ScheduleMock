@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import com.squareup.otto.Subscribe;
 
+import schedule.mock.App;
 import schedule.mock.R;
 import schedule.mock.adapters.MenuAdapter;
 import schedule.mock.enums.MenuItem;
@@ -74,6 +75,7 @@ public final class MenuFragment extends ListFragment {
 		MenuItem menuItem = mMenuItems[_e.getPosition()];
 		if (menuItem.isEnable()) {
 			menuItem.setEnable(false);
+			App.setSelectedMenuItem(menuItem);
 			for (MenuItem item : mMenuItems) {
 				if (item != menuItem) {
 					/* What not being selected. */

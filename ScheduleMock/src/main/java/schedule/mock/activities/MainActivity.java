@@ -83,6 +83,17 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		}
 		changeSwitchStatus(Prefs.getInstance().getMockStatus());
 		initSidebar();
+
+
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		schedule.mock.enums.MenuItem selectedMenuItem = App.getSelectedMenuItem();
+		if( selectedMenuItem != null) {
+			BusProvider.getBus().post(selectedMenuItem.getOpenEvent());
+		}
 	}
 
 	private void initPull2LoadView() {
@@ -105,7 +116,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	public void onShowHome(UIShowHomeEvent _e) {
 		getSupportFragmentManager().beginTransaction()
 				.replace(MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext()), HomeFragment.TAG)
-				.addToBackStack(HomeFragment.TAG).commit();
+				 .commit();
 	}
 
 	@Override
@@ -349,7 +360,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 						R.anim.slide_out_from_top_to_down_fast)
 				.replace(MAIN_CONTAINER,
 						location != null ? MyMapFragment.newInstance(location, null) : MyMapFragment.newInstance(),
-						MyMapFragment.TAG).addToBackStack(MyMapFragment.TAG).commit();
+						MyMapFragment.TAG).commit();
 	}
 
 	/**
@@ -456,7 +467,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 				.setCustomAnimations(R.anim.slide_in_from_down_to_top_fast, R.anim.no, R.anim.no,
 						R.anim.slide_out_from_top_to_down_fast)
 				.replace(MAIN_CONTAINER, InputFragment.newInstance(this, _e.isVoiceInput()), InputFragment.TAG)
-				.addToBackStack(InputFragment.TAG).commit();
+				 .commit();
 	}
 
 	/***
@@ -502,21 +513,21 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		getSupportFragmentManager()
 				.beginTransaction()
 				.replace(MAIN_CONTAINER, HistoryListFragment.newInstance(getApplicationContext()),
-						HistoryListFragment.TAG).addToBackStack(HistoryListFragment.TAG).commit();
+						HistoryListFragment.TAG).commit();
 	}
 
 	@Subscribe
 	public void onUIShowSchedule(UIShowScheduleEvent _e) {
 		getSupportFragmentManager().beginTransaction()
 				.replace(MAIN_CONTAINER, ScheduleFragment.newInstance(getApplicationContext()), ScheduleFragment.TAG)
-				.addToBackStack(ScheduleFragment.TAG).commit();
+				 .commit();
 	}
 
 	@Subscribe
 	public void onUIShowGPlus(UIShowGPlusEvent _e) {
 		getSupportFragmentManager().beginTransaction()
 				.replace(MAIN_CONTAINER, GPlusFragment.newInstance(getApplicationContext()), GPlusFragment.TAG)
-				.addToBackStack(GPlusFragment.TAG).commit();
+			 .commit();
 	}
 
 	@Subscribe
