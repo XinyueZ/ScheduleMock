@@ -83,6 +83,13 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		changeSwitchStatus(Prefs.getInstance().getMockStatus());
 		initSidebar();
 
+		initCurrentView();
+	}
+
+	/***
+	 * Show current view, it will be last view that users see, default is HOME.
+	 */
+	private void initCurrentView() {
 		schedule.mock.enums.MenuItem selectedMenuItem = App.getSelectedMenuItem();
 		if (selectedMenuItem != null) {
 			BusProvider.getBus().post(selectedMenuItem.getOpenEvent());
