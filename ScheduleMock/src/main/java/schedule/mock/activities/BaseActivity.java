@@ -14,15 +14,8 @@ import schedule.mock.utils.BusProvider;
 public abstract class BaseActivity extends ActionBarActivity {
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-		BusProvider.getBus().register(this);
-	}
-
-	@Override
 	protected void onPause() {
 		super.onPause();
-		BusProvider.getBus().unregister(this);
 
 		TaskHelper.getRequestQueue().cancelAll(GsonRequestTask.TAG);
 	}
@@ -31,6 +24,14 @@ public abstract class BaseActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		showOverflowAlways();
+		BusProvider.getBus().register(this);
+	}
+
+	@Override
+	protected void onDestroy() {
+
+		BusProvider.getBus().unregister(this);
+		super.onDestroy();
 	}
 
 	private void showOverflowAlways() {

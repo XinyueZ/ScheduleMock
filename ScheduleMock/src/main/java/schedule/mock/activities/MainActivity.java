@@ -79,21 +79,16 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		super.onCreate(_savedInstanceState);
 		setContentView(LAYOUT);
 		initPull2LoadView();
-		if (_savedInstanceState == null) {
-			initHome();
-		}
+
 		changeSwitchStatus(Prefs.getInstance().getMockStatus());
 		initSidebar();
-	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
 		schedule.mock.enums.MenuItem selectedMenuItem = App.getSelectedMenuItem();
-		if( selectedMenuItem != null) {
+		if (selectedMenuItem != null) {
 			BusProvider.getBus().post(selectedMenuItem.getOpenEvent());
 		}
 	}
+
 
 	private void initPull2LoadView() {
 		mPullToRefreshAttacher = PullToRefreshAttacher.get(this);
@@ -106,16 +101,11 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		mDrawerToggle = new ActionBarDrawerToggle(this, sidebar, R.drawable.ic_drawer, -1, -1);
 	}
 
-	private void initHome() {
-		getSupportFragmentManager().beginTransaction()
-				.replace(MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext()), HomeFragment.TAG).commit();
-	}
 
 	@Subscribe
 	public void onShowHome(UIShowHomeEvent _e) {
 		getSupportFragmentManager().beginTransaction()
-				.replace(MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext()), HomeFragment.TAG)
-				 .commit();
+				.replace(MAIN_CONTAINER, HomeFragment.newInstance(getApplicationContext()), HomeFragment.TAG).commit();
 	}
 
 	@Override
@@ -466,7 +456,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 				.setCustomAnimations(R.anim.slide_in_from_down_to_top_fast, R.anim.no, R.anim.no,
 						R.anim.slide_out_from_top_to_down_fast)
 				.replace(MAIN_CONTAINER, InputFragment.newInstance(this, _e.isVoiceInput()), InputFragment.TAG)
-				 .commit();
+				.commit();
 	}
 
 	/***
@@ -519,14 +509,14 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	public void onUIShowSchedule(UIShowScheduleEvent _e) {
 		getSupportFragmentManager().beginTransaction()
 				.replace(MAIN_CONTAINER, ScheduleFragment.newInstance(getApplicationContext()), ScheduleFragment.TAG)
-				 .commit();
+				.commit();
 	}
 
 	@Subscribe
 	public void onUIShowGPlus(UIShowGPlusEvent _e) {
 		getSupportFragmentManager().beginTransaction()
 				.replace(MAIN_CONTAINER, GPlusFragment.newInstance(getApplicationContext()), GPlusFragment.TAG)
-			 .commit();
+				.commit();
 	}
 
 	@Subscribe

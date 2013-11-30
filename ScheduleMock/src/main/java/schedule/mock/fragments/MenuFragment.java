@@ -17,7 +17,6 @@ import schedule.mock.adapters.MenuAdapter;
 import schedule.mock.enums.MenuItem;
 import schedule.mock.events.UICloseSidebarEvent;
 import schedule.mock.events.UIHighlightMenuItemEvent;
-import schedule.mock.events.UIShowHomeEvent;
 import schedule.mock.utils.BusProvider;
 
 public final class MenuFragment extends ListFragment {
@@ -50,7 +49,7 @@ public final class MenuFragment extends ListFragment {
 		}
 		getListView().setBackgroundResource(R.drawable.bg_menu);
 		/* Init menu */
-		BusProvider.getBus().post(new UICloseSidebarEvent(new UIShowHomeEvent()));
+//		BusProvider.getBus().post(new UICloseSidebarEvent(new UIShowHomeEvent()));
 
 	}
 

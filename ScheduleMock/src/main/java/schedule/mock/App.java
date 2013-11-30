@@ -25,7 +25,7 @@ public final class App extends Application {
 
 
 
-	private static MenuItem sSelectedMenuItem;
+	private static MenuItem sSelectedMenuItem = MenuItem.HOME;
 
 	@Override
 	public void onCreate() {
