@@ -80,6 +80,7 @@
     <orderEntry type="module" module-name="volley" exported="" />
     <orderEntry type="library" exported="" name="ComAndroidSupportAppcompatV71900.aar" level="project" />
     <orderEntry type="library" exported="" name="commons-lang3-3.1" level="project" />
+    <orderEntry type="library" name="nineoldandroids-2.4.0" level="project" />
   </component>
 </module>
 

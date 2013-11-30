@@ -39,9 +39,8 @@ public final class AppDB {
 		} catch (Exception _e) {
 			_e.printStackTrace();
 		} finally {
-			assert c != null;
+			assert c != null && DB != null;
 			c.close();
-			assert DB != null;
 			DB.close();
 		}
 		return rowId != -1;
@@ -65,9 +64,8 @@ public final class AppDB {
 		} catch (Exception _e) {
 			_e.printStackTrace();
 		} finally {
-			assert c != null;
+			assert c != null && DB != null;
 			c.close();
-			assert DB != null;
 			DB.close();
 		}
 		return results;
@@ -88,9 +86,8 @@ public final class AppDB {
 			} catch (Exception _e) {
 				_e.printStackTrace();
 			} finally {
-				assert c != null;
+				assert c != null && DB!=null;
 				c.close();
-				assert DB != null;
 				DB.close();
 			}
 		}

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent" android:background="@drawable/bg_main"
+                android:layout_width="match_parent"
+                android:background="@drawable/bg_main"
                 android:layout_height="match_parent">
 
 	<ListView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -10,4 +11,27 @@
 	          android:layout_alignParentTop="true"
 	          android:layout_width="match_parent"
 	          android:layout_height="match_parent"/>
+
+	<LinearLayout
+			android:id="@+id/ll_empty_list"
+			android:layout_width="match_parent"
+			android:orientation="vertical" android:layout_centerInParent="true"
+			android:layout_height="wrap_content">
+
+		<ImageView
+				android:layout_width="wrap_content"
+				android:background="@android:color/transparent"
+				android:src="@drawable/ic_empty"
+				android:layout_gravity="center"
+				android:contentDescription="@null"
+				android:layout_height="wrap_content"/>
+
+		<TextView
+				android:layout_marginTop="5dp"
+				android:gravity="center"
+				android:layout_gravity="center"
+				android:layout_width="match_parent"
+				android:text="@string/label_no_history"
+				android:layout_height="wrap_content"/>
+	</LinearLayout>
 </RelativeLayout>
