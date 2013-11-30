@@ -84,8 +84,6 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		}
 		changeSwitchStatus(Prefs.getInstance().getMockStatus());
 		initSidebar();
-
-
 	}
 
 	@Override

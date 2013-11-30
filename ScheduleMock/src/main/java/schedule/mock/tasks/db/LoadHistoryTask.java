@@ -18,7 +18,7 @@ public abstract class LoadHistoryTask extends AsyncTask<Void, List<DOHistoryReco
 	private boolean mShowLastRows;
 
 	public LoadHistoryTask(Context _context) {
-		mContext = _context;
+		this(_context, false);
 	}
 
 	public LoadHistoryTask(Context _context, boolean _showLastRows) {
