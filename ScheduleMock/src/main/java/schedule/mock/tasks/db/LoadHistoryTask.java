@@ -10,13 +10,20 @@ import schedule.mock.App;
 import schedule.mock.data.DOHistoryRecorder;
 import schedule.mock.events.UIShowLoadingCompleteEvent;
 import schedule.mock.events.UIShowLoadingEvent;
+import schedule.mock.prefs.Prefs;
 import schedule.mock.utils.BusProvider;
 
 public abstract class LoadHistoryTask extends AsyncTask<Void, List<DOHistoryRecorder>, List<DOHistoryRecorder>> {
 	private Context mContext;
+	private boolean mShowLastRows;
 
 	public LoadHistoryTask(Context _context) {
 		mContext = _context;
+	}
+
+	public LoadHistoryTask(Context _context, boolean _showLastRows) {
+		mContext = _context;
+		mShowLastRows = _showLastRows;
 	}
 
 	@Override
@@ -27,7 +34,11 @@ public abstract class LoadHistoryTask extends AsyncTask<Void, List<DOHistoryReco
 
 	@Override
 	protected List<DOHistoryRecorder> doInBackground(Void ... _params) {
-		return App.getDB().getHistoryList();
+		if(!mShowLastRows) {
+			return App.getDB().getHistoryList();
+		} else {
+			return App.getDB().getHistoryList(Prefs.getInstance().getLastRowsCount());
+		}
 	}
 
 	@Override

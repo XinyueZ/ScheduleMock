@@ -41,6 +41,8 @@ public final class Prefs extends BasicPrefs {
 	private final static String KEY_MOCK_LAT = "mock.lat";
 	/** Lng of mocking */
 	private final static String KEY_MOCK_LNG = "mock.lng";
+	/** Last ? rows of history on InputFragment*/
+	private final static String KEY_LAST_ROWS = "last.rows";
 	/** The Instance. */
 	private static Prefs sInstance;
 
@@ -246,6 +248,14 @@ public final class Prefs extends BasicPrefs {
 
 	public void setMockLng(String _lng) {
 		setString(KEY_MOCK_LNG, _lng);
+	}
+
+	public int getLastRowsCount() {
+		return getInt(KEY_LAST_ROWS, 5);
+	}
+
+	public void setLastRowsCount(int _count) {
+		setInt(KEY_LAST_ROWS, _count);
 	}
 
 	/**

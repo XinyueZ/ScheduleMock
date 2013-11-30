@@ -4,7 +4,7 @@
                 android:background="@drawable/bg_main"
                 android:layout_height="match_parent">
 
-	<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+	<ListView
 	          android:layout_alignParentLeft="true"
 	          android:id="@+id/lv_history_list"
 	          android:cacheColorHint="@android:color/transparent"

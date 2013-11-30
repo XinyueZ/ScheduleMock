@@ -31,6 +31,7 @@ import schedule.mock.events.FindMyLocationEvent;
 import schedule.mock.events.ServiceLocationChangedEvent;
 import schedule.mock.events.StartLocationMockTrackingEvent;
 import schedule.mock.events.UICloseSidebarEvent;
+import schedule.mock.events.UIRefreshHistoryListEvent;
 import schedule.mock.events.UIShowAfterFinishMockingEvent;
 import schedule.mock.events.UIShowCanNotMockLocationEvent;
 import schedule.mock.events.UIShowGPlusEvent;
@@ -312,6 +313,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 					DOGeocodeFromLatLng.class).execute();
 			stopLocationProcess();// no more loction now.
 		} else {
+			BusProvider.getBus().post(new UIRefreshHistoryListEvent());
 			onUIShowAfterStartMocking(_e.getLocation());
 		}
 	}
@@ -334,7 +336,6 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		if (mProgressDialog != null && mProgressDialog.isShowing()) {
 			mProgressDialog.dismiss();
 		}
-		// finish();
 		onUIShowGoogleMap(new UIShowGoogleMapEvent(_location));
 	}
 

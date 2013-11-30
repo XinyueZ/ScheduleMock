@@ -11,10 +11,53 @@
 			android:layout_height="wrap_content"
 			layout="@layout/inc_shadow_header"/>
 
+	<TextView
+			android:layout_marginLeft="5dp"
+			android:layout_marginRight="5dp"
+			android:textStyle="bold"
+			android:layout_width="match_parent"
+			android:text="@string/label_find_location"
+			android:layout_height="wrap_content"/>
+
+	<View
+			android:layout_width="match_parent"
+			android:layout_margin="5dp"
+			android:layout_height="1dp"
+			android:background="@color/cyan"/>
+
 	<include
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			layout="@layout/inc_search_input"/>
 
+	<LinearLayout
+			android:orientation="vertical"
+			android:id="@+id/fl_histroy"
+			android:visibility="gone"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
 
+		<TextView
+				android:layout_marginTop="10dp"
+				android:layout_marginLeft="5dp"
+				android:layout_marginRight="5dp"
+				android:layout_width="match_parent"
+				android:textStyle="bold"
+				android:text="@string/label_current_history_list"
+				android:layout_height="wrap_content"/>
+
+		<View
+				android:layout_width="match_parent"
+				android:layout_margin="5dp"
+				android:layout_height="1dp"
+				android:background="@color/cyan"/>
+
+		<ListView
+				android:layout_marginLeft="5dp"
+				android:layout_marginRight="5dp"
+				android:id="@+id/lv_history_list"
+				android:cacheColorHint="@android:color/transparent"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+	</LinearLayout>
 </LinearLayout>

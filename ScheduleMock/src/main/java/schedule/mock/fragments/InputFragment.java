@@ -1,24 +1,29 @@
 package schedule.mock.fragments;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import schedule.mock.App;
 import schedule.mock.BuildConfig;
 import schedule.mock.R;
+import schedule.mock.adapters.HistoryListAdapter;
 import schedule.mock.data.DOGecodeFromVoiceAddress;
 import schedule.mock.data.DOGeocodeFromAddress;
 import schedule.mock.data.DOGeocodeFromLatLng;
 import schedule.mock.data.DOGeocodeResult;
 import schedule.mock.data.DOGeometry;
+import schedule.mock.data.DOHistoryRecorder;
 import schedule.mock.data.DOLatLng;
 import schedule.mock.data.DONearBy;
 import schedule.mock.data.DONearByResult;
+import schedule.mock.events.UIRefreshHistoryListEvent;
 import schedule.mock.events.UIPlaceListIsReadyEvent;
 import schedule.mock.events.UIShowPlaceListEvent;
 import schedule.mock.events.VoiceInputEvent;
 import schedule.mock.fragments.dialog.PlaceListDialogFragment;
 import schedule.mock.prefs.Prefs;
+import schedule.mock.tasks.db.LoadHistoryTask;
 import schedule.mock.tasks.net.GsonRequestTask;
 import schedule.mock.utils.BusProvider;
 import schedule.mock.utils.GeocodeUtil;
@@ -36,6 +41,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -75,7 +81,7 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 			}
 		}
 
-		if( _savedInstanceState != null ) {
+		if (_savedInstanceState != null) {
 			mStreet = _savedInstanceState.getString(EXTRAS_STREET);
 			mCity = _savedInstanceState.getString(EXTRAS_CITY);
 			mCountry = _savedInstanceState.getString(EXTRAS_COUNTRY);
@@ -84,8 +90,11 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		EditText city = (EditText) rootView.findViewById(R.id.et_mocked_city_name);
 		EditText country = (EditText) rootView.findViewById(R.id.et_mocked_county_name);
 		street.setText(mStreet);
-		city.setText(mCity );
-		country.setText(mCountry );
+		city.setText(mCity);
+		country.setText(mCountry);
+
+
+		onUIRefreshHistoryList(null);
 
 		return rootView;
 	}
@@ -361,6 +370,27 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 		if (view != null) {
 			TextView lanlng = (TextView) view.findViewById(R.id.tv_mocked_lanlng);
 			lanlng.setText("");
+		}
+	}
+
+	@Subscribe
+	public void onUIRefreshHistoryList(UIRefreshHistoryListEvent _e) {
+		Activity activity = getActivity();
+		if (activity != null) {
+			Context context = activity.getApplicationContext();
+			new LoadHistoryTask(context, true) {
+				@Override
+				protected void onShowList(Context _context, List<DOHistoryRecorder> _historyRecorders) {
+					View view = getView();
+					if (view != null) {
+						View history = view.findViewById(R.id.fl_histroy);
+						history.setVisibility(_historyRecorders != null && _historyRecorders.size() > 0 ? View.VISIBLE
+								: View.GONE);
+						ListView listView = (ListView) history.findViewById(R.id.lv_history_list);
+						listView.setAdapter(new HistoryListAdapter(_context, _historyRecorders));
+					}
+				}
+			}.exec();
 		}
 	}
 }
