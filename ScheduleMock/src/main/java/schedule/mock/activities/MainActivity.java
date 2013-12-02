@@ -15,6 +15,7 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -66,7 +67,8 @@ import schedule.mock.utils.Utils;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshAttacher;
 
 public final class MainActivity extends BaseActivity implements DrawerLayout.DrawerListener,
-		uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefreshListener, View.OnClickListener {
+		uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefreshListener, View.OnClickListener,
+		CompoundButton.OnCheckedChangeListener {
 
 	public static final int LAYOUT = R.layout.activity_main;
 	private static final int MAIN_CONTAINER = R.id.container;
@@ -82,7 +84,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		setContentView(LAYOUT);
 		initPull2LoadView();
 
-		changeSwitchStatus(Prefs.getInstance().getMockStatus());
+		changeSwitchStatus(Prefs.getInstance().isMockStatus());
 		initSidebar();
 
 		initCurrentView();
@@ -170,8 +172,20 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	private void changeSwitchStatus(boolean _status) {
 		View customView = getSupportActionBar().getCustomView();
 		Switch aSwitch = (Switch) customView.findViewById(R.id.switch_mock);
-		aSwitch.setOnClickListener(this);
+		aSwitch.setOnCheckedChangeListener(null);
 		aSwitch.setChecked(_status);
+		aSwitch.setOnCheckedChangeListener(this);
+	}
+
+
+
+	@Override
+	public void onCheckedChanged(CompoundButton _buttonView, boolean _isChecked) {
+		if (!_buttonView.isChecked() && Prefs.getInstance().isMockStatus()) {
+			/* Stop location system */
+			stopLocationProcess();
+			mCuttingMock = true;
+		}
 	}
 
 	@Override
@@ -241,7 +255,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		 * still a fallback dialog to prevent switching. See.
 		 * AskCuttingMockDialogFragment in findMyLocation().
 		 */
-		tracking.setEnabled(!(mLocationInProcess || Prefs.getInstance().getMockStatus()));
+		tracking.setEnabled(!(mLocationInProcess || Prefs.getInstance().isMockStatus()));
 
 		return super.onPrepareOptionsMenu(_menu);
 	}
@@ -257,15 +271,6 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 			/* Click on address on the actionbar. */
 			if (_v.getTag() instanceof DOGeocodeResult) {
 				openCurrentPositionInMap(_v);
-			}
-			break;
-		case R.id.switch_mock:
-			/* Click on switch to "off" mock status. */
-			de.ankri.views.Switch aSwitch = (Switch) _v;
-			if (!aSwitch.isChecked()) {
-				/* Stop location system */
-				stopLocationProcess();
-				mCuttingMock = true;
 			}
 			break;
 		default:
@@ -348,7 +353,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		Prefs prefs = Prefs.getInstance();
 		Location location = _e.getLocation();
 		/* In mocking status. */
-		boolean isMocking = prefs.getMockStatus();
+		boolean isMocking = prefs.isMockStatus();
 		if (isMocking) {
 			location = new Location("mock");
 			location.setLatitude(Double.valueOf(prefs.getMockLat()));
@@ -392,7 +397,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	private TextView setActionBarTitle(String _actionBarTitle) {
 		View customView = getSupportActionBar().getCustomView();
 		TextView currentLocation = (TextView) customView.findViewById(R.id.tv_current_location);
-		if (Prefs.getInstance().getMockStatus()) {
+		if (Prefs.getInstance().isMockStatus()) {
 			currentLocation.setTextColor(Color.RED);
 			currentLocation.setTypeface(null, Typeface.BOLD);
 		} else {
@@ -437,7 +442,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	 */
 	@Subscribe
 	public void findMyLocation(FindMyLocationEvent _e) {
-		if (Prefs.getInstance().getMockStatus()) {
+		if (Prefs.getInstance().isMockStatus()) {
 			/* In mock-status should stop mocking first. */
 			AskCuttingMockDialogFragment.showInstance(this);
 		} else {
@@ -553,5 +558,4 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	public void onShowOpenMockPermission(UIShowOpenMockPermissionEvent _e) {
 
 	}
-
 }

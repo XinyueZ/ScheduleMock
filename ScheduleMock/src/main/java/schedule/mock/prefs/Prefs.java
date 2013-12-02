@@ -226,11 +226,11 @@ public final class Prefs extends BasicPrefs {
 		setInt(KEY_RADIUS, _radius);
 	}
 
-	public boolean getMockStatus() {
+	public boolean isMockStatus() {
 		return getBoolean(KEY_MOCK_STATUS, false);
 	}
 
-	public void setMockStatus(boolean _on) {
+	public void setIsMockStatus(boolean _on) {
 		setBoolean(KEY_MOCK_STATUS, _on);
 	}
 

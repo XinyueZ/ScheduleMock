@@ -129,7 +129,7 @@ public final class StartLocationTrackingService extends Service implements
 
 	private void setPrefs(boolean _mockStatus) {
 		Prefs prefs = Prefs.getInstance();
-		prefs.setMockStatus(_mockStatus);
+		prefs.setIsMockStatus(_mockStatus);
 		prefs.setMockLat(_mockStatus ? mMockLocation.getLatitude() + "" : null);
 		prefs.setMockLng(_mockStatus ? mMockLocation.getLongitude() + "" : null);
 	}
