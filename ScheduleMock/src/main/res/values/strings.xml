@@ -8,7 +8,6 @@
 	<string name="hint_search_city">City</string>
 	<string name="hint_search_country">Country</string>
 	<string name="hint_current_location">Current location</string>
-	<string name="warning_input_address">You should input an address.</string>
 	<string name="general_ok">Ok</string>
 	<string name="general_yes">Yes</string>
 	<string name="general_no">No</string>
@@ -16,19 +15,17 @@
 	<string name="general_close">Close</string>
 	<string name="general_on">ON</string>
 	<string name="general_off">OFF</string>
-	<string name="title_mock_from_list">Select and mock</string>
-	<string name="title_notification">Mock Location Testing</string>
-	<string name="content_notification">Mock Location Testing</string>
+	<string name="notify_title">Mocking Location.</string>
 	<string name="toast_start_location_tracking">Start location tracking.</string>
 	<string name="toast_start_location_mocking">Start location mocking.</string>
 	<string name="toast_stop_location_tracking">Stop location tracking.</string>
 	<string name="toast_stop_location_mocking">Stop location mocking.</string>
+	<string name="toast_input_address">You should input an address.</string>
 	<string name="popup_stop_mocking">Stop mocking</string>
 	<string name="popup_my_location">Locating…</string>
 	<string name="popup_cut_mocking">You are mocking your location, do you want to switch onto your real location?</string>
 	<string name="menu_my_location">My Location</string>
 	<string name="menu_voice_input">Voice Input</string>
-
 	<string name="menu_home">Home</string>
 	<string name="menu_input">Input</string>
 	<string name="menu_map">Map</string>
@@ -38,4 +35,6 @@
 	<string name="label_no_history">No history!</string>
 	<string name="label_find_location">INPUT YOUR LOCATION OR FIND NEAR BY</string>
 	<string name="label_current_history_list">CURRENT MOCKED LOCATIONS</string>
+	<string name="label_mock_from_list">Select and mock.</string>
+	<string name="label_mocking">Mocking location.</string>
 </resources>

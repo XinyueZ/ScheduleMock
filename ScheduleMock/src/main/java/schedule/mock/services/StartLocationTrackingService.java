@@ -195,7 +195,7 @@ public final class StartLocationTrackingService extends Service implements
 		NotificationCompat.Builder builder;
 
 		// Get the notification title
-		String contentTitle = this.getString(R.string.title_notification);
+		String contentTitle = this.getString(R.string.notify_title);
 
 		// prepare an intent with activity
 		Intent intentNotify = new Intent(this, MainActivity.class);

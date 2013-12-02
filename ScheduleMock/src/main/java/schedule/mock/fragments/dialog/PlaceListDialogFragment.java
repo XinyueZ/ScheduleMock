@@ -56,7 +56,7 @@ public final class PlaceListDialogFragment extends BaseDialogFragment implements
 					_e.getNearByResults());
 			ListView listView = (ListView) view.findViewById(R.id.lv_places);
 			listView.setAdapter(adapter);
-			getDialog().setTitle(R.string.title_mock_from_list);
+			getDialog().setTitle(R.string.label_mock_from_list);
 		}
 	}
 

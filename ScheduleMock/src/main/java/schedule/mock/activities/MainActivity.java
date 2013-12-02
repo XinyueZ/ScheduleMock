@@ -3,6 +3,8 @@ package schedule.mock.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -88,6 +90,9 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 
 	/***
 	 * Show current view, it will be last view that users see, default is HOME.
+	 * See onHighlightMenuItem in MenuFragment to know how to save last menu
+	 * item in App .
+	 * 
 	 */
 	private void initCurrentView() {
 		schedule.mock.enums.MenuItem selectedMenuItem = App.getSelectedMenuItem();
@@ -95,7 +100,6 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 			BusProvider.getBus().post(selectedMenuItem.getOpenEvent());
 		}
 	}
-
 
 	private void initPull2LoadView() {
 		mPullToRefreshAttacher = PullToRefreshAttacher.get(this);
@@ -107,7 +111,6 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		sidebar.setDrawerListener(this);
 		mDrawerToggle = new ActionBarDrawerToggle(this, sidebar, R.drawable.ic_drawer, -1, -1);
 	}
-
 
 	@Subscribe
 	public void onShowHome(UIShowHomeEvent _e) {
@@ -309,6 +312,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 			stopLocationProcess();// no more loction now.
 		} else {
 			BusProvider.getBus().post(new UIRefreshHistoryListEvent());
+			setActionBarTitle(getString(R.string.label_mocking));
 			onUIShowAfterStartMocking(_e.getLocation());
 		}
 	}
@@ -365,19 +369,38 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	@Subscribe
 	public void onDOGeocodeSuccess(DOGeocodeFromLatLng _geocode) {
 		if (_geocode != null) {
-			View customView = getSupportActionBar().getCustomView();
-			TextView currentLocation = (TextView) customView.findViewById(R.id.tv_current_location);
+			TextView textView;
 			DOGeocodeResult[] results = _geocode.getGeocodeResults();
 			if (results != null && results.length > 0) {
 				DOGeocodeResult result = results[0];
 				String fullAddress = result.getFullAddress();
-				currentLocation.setText(fullAddress);
 
+				textView = setActionBarTitle(fullAddress);
 				/* Store current location to address text-view. */
-				currentLocation.setTag(result);
-				currentLocation.setOnClickListener(this);
+				textView.setTag(result);
+				textView.setOnClickListener(this);
 			}
 		}
+	}
+
+	/***
+	 * Set title when location's changed(either gps or mocked).
+	 * 
+	 * @param _actionBarTitle
+	 * @return TextView that holds title.
+	 */
+	private TextView setActionBarTitle(String _actionBarTitle) {
+		View customView = getSupportActionBar().getCustomView();
+		TextView currentLocation = (TextView) customView.findViewById(R.id.tv_current_location);
+		if (Prefs.getInstance().getMockStatus()) {
+			currentLocation.setTextColor(Color.RED);
+			currentLocation.setTypeface(null, Typeface.BOLD);
+		} else {
+			currentLocation.setTextColor(Color.WHITE);
+			currentLocation.setTypeface(null, Typeface.NORMAL);
+		}
+		currentLocation.setText(_actionBarTitle);
+		return currentLocation;
 	}
 
 	@Subscribe

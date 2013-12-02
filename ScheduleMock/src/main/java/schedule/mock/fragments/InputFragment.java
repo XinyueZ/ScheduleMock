@@ -193,7 +193,7 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 				new GsonRequestTask<DOGeocodeFromAddress>(getActivity().getApplicationContext(), Request.Method.GET,
 						url.trim(), DOGeocodeFromAddress.class).execute();
 			} else {
-				Utils.showLongToast(getActivity().getApplicationContext(), R.string.warning_input_address);
+				Utils.showLongToast(getActivity().getApplicationContext(), R.string.toast_input_address);
 			}
 		}
 	}
