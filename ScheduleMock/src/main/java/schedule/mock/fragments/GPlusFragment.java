@@ -50,7 +50,7 @@ public final class GPlusFragment extends BaseFragment implements View.OnClickLis
 			login.setOnClickListener(this);
 			View logout = _view.findViewById(R.id.btn_gplus_signout);
 			logout.setOnClickListener(this);
-			updateButtons(_view);
+			updateUI(_view);
 		}
 	}
 
@@ -102,7 +102,7 @@ public final class GPlusFragment extends BaseFragment implements View.OnClickLis
 		}
 	}
 
-	private void updateButtons(View _v) {
+	private void updateUI(View _v) {
 		SignInButton signInButton = (SignInButton) _v.findViewById(R.id.btn_gplus_signin);
 		Button signOutButton = (Button) _v.findViewById(R.id.btn_gplus_signout);
 		NetworkImageView personPhoto = (NetworkImageView) _v.findViewById(R.id.iv_gplus_person_photo);
@@ -163,7 +163,7 @@ public final class GPlusFragment extends BaseFragment implements View.OnClickLis
 		mPlusClient = _e.getPlusClient();
 		View view = getView();
 		if (view != null) {
-			updateButtons(view);
+			updateUI(view);
 		}
 		BusProvider.getBus().post(new UIShowLoadingCompleteEvent());
 	}

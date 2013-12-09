@@ -2,6 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
+                android:background="@drawable/bg_main"
                 android:layout_height="match_parent">
 
 	<com.android.volley.toolbox.NetworkImageView
@@ -37,4 +38,9 @@
 			android:visibility="gone"
 			android:layout_centerHorizontal="true"
 			android:layout_below="@+id/tv_gplus_name"/>
+
+	<include
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			layout="@layout/inc_shadow_header"/>
 </RelativeLayout>

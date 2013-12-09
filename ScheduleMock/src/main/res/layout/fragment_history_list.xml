@@ -34,4 +34,9 @@
 				android:text="@string/label_no_history"
 				android:layout_height="wrap_content"/>
 	</LinearLayout>
+
+	<include
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			layout="@layout/inc_shadow_header"/>
 </RelativeLayout>
