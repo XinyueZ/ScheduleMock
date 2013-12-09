@@ -3,11 +3,16 @@
 
 	<item android:id="@+id/menu_voice_input"
 	      android:title="@string/menu_voice_input"
-	      android:icon="@drawable/selector_voice_input"
+	      android:icon="@drawable/selector_btn_voice_input"
 	      app:showAsAction="always" />
 
     <item android:id="@+id/menu_my_location"
         android:title="@string/menu_my_location"
-        android:icon="@drawable/ic_radar_long"
+        android:icon="@drawable/selector_btn_my_locaiton"
         app:showAsAction="always" />
+
+	<item android:id="@+id/menu_share"
+	      android:title="@string/menu_share_this_app"
+	      android:icon="@drawable/selector_btn_share"
+	      app:showAsAction="always" />
 </menu>

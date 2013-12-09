@@ -26,6 +26,7 @@
 	<string name="popup_cut_mocking">You are mocking your location, do you want to switch onto your real location?</string>
 	<string name="menu_my_location">My Location</string>
 	<string name="menu_voice_input">Voice Input</string>
+	<string name="menu_share_this_app">Share this App</string>
 	<string name="menu_home">Home</string>
 	<string name="menu_input">Input</string>
 	<string name="menu_map">Map</string>

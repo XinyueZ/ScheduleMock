@@ -5,7 +5,7 @@
 
 	<ImageView
 			android:id="@+id/iv_menu_icon"
-			android:src="@drawable/ic_radar_short"
+			android:src="@drawable/ic_my_location"
 			style="@style/Menu_Item_Style"/>
 
 	<TextView

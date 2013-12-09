@@ -204,7 +204,7 @@ public final class StartLocationTrackingService extends Service implements
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intentNotify, 0);
 
 		// Add values to the builder
-		builder = new NotificationCompat.Builder(this).setAutoCancel(false).setSmallIcon(R.drawable.ic_radar_long)
+		builder = new NotificationCompat.Builder(this).setAutoCancel(false).setSmallIcon(R.drawable.ic_mocking)
 				.setContentTitle(contentTitle).setContentText(mMockAddressName).setContentIntent(pendingIntent);
 
 		startForeground(ID_TRAY_NOTIFICATION, builder.build());
