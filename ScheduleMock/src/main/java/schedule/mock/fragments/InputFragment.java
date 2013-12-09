@@ -86,6 +86,7 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 			mCity = _savedInstanceState.getString(EXTRAS_CITY);
 			mCountry = _savedInstanceState.getString(EXTRAS_COUNTRY);
 		}
+		/*Init inputboxes if needs.*/
 		EditText street = (EditText) rootView.findViewById(R.id.et_mocked_street_name);
 		EditText city = (EditText) rootView.findViewById(R.id.et_mocked_city_name);
 		EditText country = (EditText) rootView.findViewById(R.id.et_mocked_county_name);

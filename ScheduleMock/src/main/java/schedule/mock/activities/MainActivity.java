@@ -125,8 +125,9 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
-		if (requestCode == REQUEST_CODE_RESOLVE_ERR && responseCode == RESULT_OK) {
+	protected void onActivityResult(int _requestCode, int _responseCode, Intent _intent) {
+		super.onActivityResult(_requestCode, _responseCode, _intent);
+		if (_requestCode == REQUEST_CODE_RESOLVE_ERR && _responseCode == RESULT_OK) {
 			mPlusClient.connect();
 		}
 	}
@@ -284,7 +285,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	public boolean onCreateOptionsMenu(Menu _menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, _menu);
-		MenuItem menuShare =  _menu.findItem(R.id.menu_share);
+		MenuItem menuShare = _menu.findItem(R.id.menu_share);
 		/*
 		 * Getting the actionprovider associated with the menu item whose id is
 		 * share
@@ -299,7 +300,6 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 
 		return true;
 	}
-
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem _item) {
