@@ -293,19 +293,13 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 				.getActionProvider(menuShare);
 
 		/* Setting a share intent */
-		provider.setShareIntent(getDefaultShareIntent(provider));
+		String subject = getString(R.string.label_share_subject);
+		String text = String.format(getString(R.string.label_share_text), getPackageName());
+		provider.setShareIntent(Utils.getDefaultShareIntent(provider, subject, text));
 
 		return true;
 	}
 
-	public Intent getDefaultShareIntent(android.support.v7.widget.ShareActionProvider _provider) {
-		// populate the share intent with data
-		Intent intent = new Intent(Intent.ACTION_SEND);
-		intent.setType("text/plain");
-		intent.putExtra(Intent.EXTRA_TEXT, "This is a message for you");
-		_provider.setShareIntent(intent);
-		return intent;
-	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem _item) {

@@ -40,4 +40,6 @@
 	<string name="label_mocking">Mocking location.</string>
 	<string name="label_sign_out">Sign out</string>
 	<string name="label_hi_gplus">Hi! %s</string>
+	<string name="label_share_subject">Mock your location with [Schedule Mock]</string>
+	<string name="label_share_text">Do not have any afraid that your other side finds you and locates you anytime anywhere.\n\nWith [Schedule Mock] you can go anywhere you want, fake your location.\n\nApp download:\n\nhttps://play.google.com/store/apps/details?id=%1$s</string>
 </resources>
