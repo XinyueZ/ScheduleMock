@@ -4,9 +4,10 @@
 	<item android:id="@+id/menu_voice_input"
 	      android:title="@string/menu_voice_input"
 	      android:icon="@drawable/selector_voice_input"
-	      app:showAsAction="never" />
+	      app:showAsAction="always" />
 
     <item android:id="@+id/menu_my_location"
         android:title="@string/menu_my_location"
-        app:showAsAction="never" />
+        android:icon="@drawable/ic_radar_long"
+        app:showAsAction="always" />
 </menu>
