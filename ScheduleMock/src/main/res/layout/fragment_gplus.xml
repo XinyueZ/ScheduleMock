@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+	<com.android.volley.toolbox.NetworkImageView
+			android:layout_width="wrap_content"
+			android:id="@+id/iv_gplus_person_photo"
+			android:layout_centerInParent="true"
+			android:src="@drawable/ic_unknown_person"
+			android:layout_marginBottom="5dp"
+			android:background="@android:color/transparent"
+			android:layout_height="wrap_content"/>
+
+	<TextView
+			android:id="@+id/tv_gplus_name"
+			android:layout_marginBottom="5dp"
+			android:text="@string/label_hi_gplus"
+			android:layout_below="@+id/iv_gplus_person_photo"
+			android:layout_width="match_parent"
+			android:gravity="center"
+			android:layout_height="wrap_content"/>
+
+	<com.google.android.gms.common.SignInButton
+			android:id="@+id/btn_gplus_signin"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerHorizontal="true"
+			android:layout_below="@+id/tv_gplus_name"/>
+
+	<Button
+			android:id="@+id/btn_gplus_signout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/label_sign_out"
+			android:visibility="gone"
+			android:layout_centerHorizontal="true"
+			android:layout_below="@+id/tv_gplus_name"/>
+</RelativeLayout>

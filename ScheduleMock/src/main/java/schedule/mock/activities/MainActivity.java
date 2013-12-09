@@ -2,6 +2,7 @@ package schedule.mock.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -19,6 +20,10 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.android.volley.Request;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.plus.PlusClient;
 import com.squareup.otto.Subscribe;
 
 import java.util.Locale;
@@ -31,6 +36,7 @@ import schedule.mock.data.DOGeocodeResult;
 import schedule.mock.data.DOLatLng;
 import schedule.mock.events.CutMockingEvent;
 import schedule.mock.events.FindMyLocationEvent;
+import schedule.mock.events.GPlusConnectionEvent;
 import schedule.mock.events.ServiceLocationChangedEvent;
 import schedule.mock.events.StartLocationMockTrackingEvent;
 import schedule.mock.events.UICloseSidebarEvent;
@@ -57,6 +63,7 @@ import schedule.mock.fragments.MyMapFragment;
 import schedule.mock.fragments.ScheduleFragment;
 import schedule.mock.fragments.dialog.AskCuttingMockDialogFragment;
 import schedule.mock.fragments.dialog.ImageDialogFragment;
+import schedule.mock.interfaces.IGooglePlusClient;
 import schedule.mock.prefs.Prefs;
 import schedule.mock.services.StartLocationTrackingService;
 import schedule.mock.tasks.db.InsertHistoryTask;
@@ -68,15 +75,71 @@ import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshAt
 
 public final class MainActivity extends BaseActivity implements DrawerLayout.DrawerListener,
 		uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefreshListener, View.OnClickListener,
-		CompoundButton.OnCheckedChangeListener {
+		CompoundButton.OnCheckedChangeListener, GooglePlayServicesClient.ConnectionCallbacks,
+		GooglePlayServicesClient.OnConnectionFailedListener, IGooglePlusClient {
 
 	public static final int LAYOUT = R.layout.activity_main;
 	private static final int MAIN_CONTAINER = R.id.container;
+	private static final int REQUEST_CODE_RESOLVE_ERR = 9000;
 	private PullToRefreshAttacher mPullToRefreshAttacher;
 	private boolean mLocationInProcess;
 	private ProgressDialog mProgressDialog;
 	private boolean mCuttingMock;
 	private ActionBarDrawerToggle mDrawerToggle;
+	/* Google plus area. */
+	private PlusClient mPlusClient;
+
+	@Override
+	public void onConnected(Bundle _bundle) {
+		BusProvider.getBus().post(new GPlusConnectionEvent(mPlusClient));
+	}
+
+	@Override
+	public void onDisconnected() {
+		BusProvider.getBus().post(new GPlusConnectionEvent(mPlusClient));
+	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult _connectionResult) {
+		if (_connectionResult.hasResolution()) {
+			try {
+				_connectionResult.startResolutionForResult(this, REQUEST_CODE_RESOLVE_ERR);
+			} catch (IntentSender.SendIntentException e) {
+				mPlusClient.connect();
+			}
+		}
+		BusProvider.getBus().post(new GPlusConnectionEvent(mPlusClient));
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		mPlusClient.connect();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		mPlusClient.disconnect();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
+		if (requestCode == REQUEST_CODE_RESOLVE_ERR && responseCode == RESULT_OK) {
+			mPlusClient.connect();
+		}
+	}
+
+	private void initGooglePlusClient() {
+		mPlusClient = new PlusClient.Builder(this, this, this).setScopes(Scopes.PLUS_LOGIN).build();
+	}
+
+	@Override
+	public PlusClient getPlusClient() {
+		return mPlusClient;
+	}
+
+	/* End Google plus area. */
 
 	@Override
 	protected void onCreate(Bundle _savedInstanceState) {
@@ -88,6 +151,8 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		initSidebar();
 
 		initCurrentView();
+
+		initGooglePlusClient();
 	}
 
 	/***
@@ -176,8 +241,6 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		aSwitch.setChecked(_status);
 		aSwitch.setOnCheckedChangeListener(this);
 	}
-
-
 
 	@Override
 	public void onCheckedChanged(CompoundButton _buttonView, boolean _isChecked) {
