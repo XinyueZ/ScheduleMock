@@ -10,6 +10,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.util.DisplayMetrics;
@@ -283,7 +284,27 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	public boolean onCreateOptionsMenu(Menu _menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, _menu);
+		MenuItem menuShare =  _menu.findItem(R.id.menu_share);
+		/*
+		 * Getting the actionprovider associated with the menu item whose id is
+		 * share
+		 */
+		android.support.v7.widget.ShareActionProvider provider = (android.support.v7.widget.ShareActionProvider) MenuItemCompat
+				.getActionProvider(menuShare);
+
+		/* Setting a share intent */
+		provider.setShareIntent(getDefaultShareIntent(provider));
+
 		return true;
+	}
+
+	public Intent getDefaultShareIntent(android.support.v7.widget.ShareActionProvider _provider) {
+		// populate the share intent with data
+		Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.setType("text/plain");
+		intent.putExtra(Intent.EXTRA_TEXT, "This is a message for you");
+		_provider.setShareIntent(intent);
+		return intent;
 	}
 
 	@Override
