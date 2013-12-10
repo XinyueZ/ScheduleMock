@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -134,12 +135,14 @@ public final class StartLocationTrackingService extends Service implements
 		prefs.setMockLng(_mockStatus ? mMockLocation.getLongitude() + "" : null);
 	}
 
-	private   void forceCloseServiceCantMockLocation() {
+
+
+	private void forceCloseServiceCantMockLocation() {
 		BusProvider.getBus().post(new UIShowCanNotMockLocationEvent());
 		stopSelf();
 	}
 
-	private void setMockLocation(long _elapsedRealtimeNanos, long _currentTime) throws SecurityException{
+	private void setMockLocation(long _elapsedRealtimeNanos, long _currentTime) throws SecurityException {
 		synchronized (LOCK) {
 			if (mInMockMode) {
 				mMockLocation.setAccuracy(3.0f);
@@ -250,7 +253,7 @@ public final class StartLocationTrackingService extends Service implements
 					}
 					try {
 						service.setMockLocation(mElapsedTimeNanos, mCurrentTime);
-					}catch (SecurityException _e) {
+					} catch (SecurityException _e) {
 						service.forceCloseServiceCantMockLocation();
 					}
 
@@ -263,7 +266,8 @@ public final class StartLocationTrackingService extends Service implements
 					mCurrentTime += mInjectionInterval * StartLocationTrackingService.MILLISECONDS_PER_SECOND;
 				}
 			} else {
-				//TODO There's no service more, what the App should do is not clear.
+				// TODO There's no service more, what the App should do is not
+				// clear.
 			}
 			return null;
 		}

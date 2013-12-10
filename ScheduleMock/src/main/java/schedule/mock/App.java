@@ -36,6 +36,8 @@ public final class App extends Application  {
 		sSelectedMenuItem = _selectedMenuItem;
 	}
 
+
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -45,10 +47,9 @@ public final class App extends Application  {
 
 
 
-
 	private void init() {
 		Prefs.createInstance(getApplicationContext());
 		TaskHelper.init(getApplicationContext());
-		sDB = new AppDB(this);
+		sDB = new AppDB(this); 
 	}
 }

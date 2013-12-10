@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="schedule.mock"
           android:versionCode="1"
           android:versionName="1.0">
@@ -65,9 +66,10 @@
 				android:screenDensity="480"
 				android:screenSize="large"/>
 	</compatible-screens>
-	<!-- So that we can get the account name -->
+
+	<uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+	<uses-permission android:name="	android.permission.WRITE_SETTINGS" />
 	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
-	<!--  Required if we need to invalidate access tokens -->
 	<uses-permission android:name="android.permission.USE_CREDENTIALS"/>
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>

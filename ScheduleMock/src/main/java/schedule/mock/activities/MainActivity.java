@@ -41,6 +41,7 @@ import schedule.mock.events.GPlusConnectionEvent;
 import schedule.mock.events.ServiceLocationChangedEvent;
 import schedule.mock.events.StartLocationMockTrackingEvent;
 import schedule.mock.events.UICloseSidebarEvent;
+import schedule.mock.events.UIDismissAppEvent;
 import schedule.mock.events.UIRefreshHistoryListEvent;
 import schedule.mock.events.UIShowAfterFinishMockingEvent;
 import schedule.mock.events.UIShowCanNotMockLocationEvent;
@@ -71,6 +72,7 @@ import schedule.mock.tasks.db.InsertHistoryTask;
 import schedule.mock.tasks.net.GsonRequestTask;
 import schedule.mock.utils.BusProvider;
 import schedule.mock.utils.DisplayUtil;
+import schedule.mock.utils.OnResumeUtil;
 import schedule.mock.utils.Utils;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshAttacher;
 
@@ -111,6 +113,8 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		}
 		BusProvider.getBus().post(new GPlusConnectionEvent(mPlusClient));
 	}
+
+
 
 	@Override
 	protected void onStart() {
@@ -155,6 +159,13 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		initCurrentView();
 
 		initGooglePlusClient();
+	}
+
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		OnResumeUtil.onResume(this);
 	}
 
 	/***
@@ -635,5 +646,10 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	@Subscribe
 	public void onShowOpenMockPermission(UIShowOpenMockPermissionEvent _e) {
 
+	}
+
+	@Subscribe
+	public void onUIDismissApp(UIDismissAppEvent _e) {
+		finish();
 	}
 }

@@ -1,7 +1,10 @@
 package schedule.mock.utils;
 
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.provider.Settings;
 import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
@@ -52,4 +55,5 @@ public final class Utils {
 		}
 		return null;
 	}
+
 }
