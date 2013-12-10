@@ -67,7 +67,7 @@
 				android:screenSize="large"/>
 	</compatible-screens>
 
-	<uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+	<!--<uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />-->
 	<uses-permission android:name="	android.permission.WRITE_SETTINGS" />
 	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
 	<uses-permission android:name="android.permission.USE_CREDENTIALS"/>

@@ -19,6 +19,7 @@ import com.squareup.otto.Subscribe;
 
 import schedule.mock.R;
 import schedule.mock.events.GPlusConnectionEvent;
+import schedule.mock.events.GPlusInitEvent;
 import schedule.mock.events.UIShowLoadingCompleteEvent;
 import schedule.mock.events.UIShowLoadingEvent;
 import schedule.mock.interfaces.IGooglePlusClient;
@@ -90,6 +91,8 @@ public final class GPlusFragment extends BaseFragment implements View.OnClickLis
 	public void signIn() {
 		if(mPlusClient != null ) {
 			mPlusClient.connect();
+		} else {
+			BusProvider.getBus().post(new GPlusInitEvent());
 		}
 	}
 

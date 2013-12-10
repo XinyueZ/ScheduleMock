@@ -38,6 +38,7 @@ import schedule.mock.data.DOLatLng;
 import schedule.mock.events.CutMockingEvent;
 import schedule.mock.events.FindMyLocationEvent;
 import schedule.mock.events.GPlusConnectionEvent;
+import schedule.mock.events.GPlusInitEvent;
 import schedule.mock.events.ServiceLocationChangedEvent;
 import schedule.mock.events.StartLocationMockTrackingEvent;
 import schedule.mock.events.UICloseSidebarEvent;
@@ -114,18 +115,20 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		BusProvider.getBus().post(new GPlusConnectionEvent(mPlusClient));
 	}
 
-
-
 	@Override
 	protected void onStart() {
 		super.onStart();
-		mPlusClient.connect();
+		if (mPlusClient != null) {
+			mPlusClient.connect();
+		}
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		mPlusClient.disconnect();
+		if (mPlusClient != null) {
+			mPlusClient.disconnect();
+		}
 	}
 
 	@Override
@@ -136,8 +139,11 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		}
 	}
 
-	private void initGooglePlusClient() {
+
+	@Subscribe
+	public void onGPlusInitilization(GPlusInitEvent _e) {
 		mPlusClient = new PlusClient.Builder(this, this, this).setScopes(Scopes.PLUS_LOGIN).build();
+		mPlusClient.connect();
 	}
 
 	@Override
@@ -157,10 +163,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		initSidebar();
 
 		initCurrentView();
-
-		initGooglePlusClient();
 	}
-
 
 	@Override
 	protected void onResume() {
