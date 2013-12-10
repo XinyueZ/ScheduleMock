@@ -23,6 +23,7 @@ import schedule.mock.events.GPlusInitEvent;
 import schedule.mock.events.UIShowLoadingCompleteEvent;
 import schedule.mock.events.UIShowLoadingEvent;
 import schedule.mock.interfaces.IGooglePlusClient;
+import schedule.mock.prefs.Prefs;
 import schedule.mock.tasks.net.TaskHelper;
 import schedule.mock.utils.BusProvider;
 
@@ -78,6 +79,14 @@ public final class GPlusFragment extends BaseFragment implements View.OnClickLis
 
 	}
 
+	public void signIn() {
+		if (mPlusClient != null) {
+			mPlusClient.connect();
+		} else {
+			BusProvider.getBus().post(new GPlusInitEvent());
+		}
+	}
+
 	public void signOut() {
 		if (mPlusClient != null && mPlusClient.isConnected()) {
 			mPlusClient.revokeAccessAndDisconnect(this);
@@ -85,14 +94,6 @@ public final class GPlusFragment extends BaseFragment implements View.OnClickLis
 			mPlusClient.disconnect();
 			mPlusClient.connect();
 			BusProvider.getBus().post(new GPlusConnectionEvent(mPlusClient));
-		}
-	}
-
-	public void signIn() {
-		if(mPlusClient != null ) {
-			mPlusClient.connect();
-		} else {
-			BusProvider.getBus().post(new GPlusInitEvent());
 		}
 	}
 
@@ -116,9 +117,9 @@ public final class GPlusFragment extends BaseFragment implements View.OnClickLis
 			personPhoto.setVisibility(View.VISIBLE);
 			name.setVisibility(View.VISIBLE);
 			Person person = mPlusClient.getCurrentPerson();
-			/*Show personal information*/
+			/* Show personal information */
 			if (person != null) {
-				/*Photo*/
+				/* Photo */
 				if (person.getImage() != null) {
 					Person.Image image = person.getImage();
 					personPhoto.setImageUrl(image.getUrl(), TaskHelper.getImageLoader());
@@ -168,6 +169,7 @@ public final class GPlusFragment extends BaseFragment implements View.OnClickLis
 		if (view != null) {
 			updateUI(view);
 		}
+		Prefs.getInstance().setGooglePlusSigIn(mPlusClient != null && mPlusClient.isConnected());
 		BusProvider.getBus().post(new UIShowLoadingCompleteEvent());
 	}
 }

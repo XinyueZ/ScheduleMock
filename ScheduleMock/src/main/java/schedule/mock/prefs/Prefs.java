@@ -41,6 +41,8 @@ public final class Prefs extends BasicPrefs {
 	private final static String KEY_MOCK_LAT = "mock.lat";
 	/** Lng of mocking */
 	private final static String KEY_MOCK_LNG = "mock.lng";
+	/** Log the last Google plus status*/
+	private final static String KEY_GPLUS_SIGN_IN_STATUS = "google.plus.sign.in.status";
 	/** Last ? rows of history on InputFragment*/
 	private final static String KEY_LAST_ROWS = "last.rows";
 	/** The Instance. */
@@ -256,6 +258,14 @@ public final class Prefs extends BasicPrefs {
 
 	public void setLastRowsCount(int _count) {
 		setInt(KEY_LAST_ROWS, _count);
+	}
+
+	public boolean isGooglePlusSigIn() {
+		return getBoolean(KEY_GPLUS_SIGN_IN_STATUS, false);
+	}
+
+	public void setGooglePlusSigIn(boolean _sigIn) {
+		setBoolean(KEY_GPLUS_SIGN_IN_STATUS, _sigIn);
 	}
 
 	/**

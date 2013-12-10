@@ -163,6 +163,11 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 		initSidebar();
 
 		initCurrentView();
+
+		/*Might init Goolge plus for the case that the last time user had signed in.*/
+		if(Prefs.getInstance().isGooglePlusSigIn()) {
+			onGPlusInitilization(null);
+		}
 	}
 
 	@Override
