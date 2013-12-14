@@ -39,6 +39,7 @@ import schedule.mock.events.CutMockingEvent;
 import schedule.mock.events.FindMyLocationEvent;
 import schedule.mock.events.GPlusConnectionEvent;
 import schedule.mock.events.GPlusInitEvent;
+import schedule.mock.events.LocationClientConnectionFailedEvent;
 import schedule.mock.events.ServiceLocationChangedEvent;
 import schedule.mock.events.StartLocationMockTrackingEvent;
 import schedule.mock.events.UICloseSidebarEvent;
@@ -73,9 +74,12 @@ import schedule.mock.tasks.db.InsertHistoryTask;
 import schedule.mock.tasks.net.GsonRequestTask;
 import schedule.mock.utils.BusProvider;
 import schedule.mock.utils.DisplayUtil;
-import schedule.mock.utils.OnResumeUtil;
+import schedule.mock.utils.GooglePlayServicesUtils;
+import schedule.mock.utils.LL;
 import schedule.mock.utils.Utils;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarcompat.PullToRefreshAttacher;
+
+import static schedule.mock.utils.GooglePlayServicesUtils.REQUEST_PLAY_SERVICE_PROBLEM;
 
 public final class MainActivity extends BaseActivity implements DrawerLayout.DrawerListener,
 		uk.co.senab.actionbarpulltorefresh.library.PullToRefreshAttacher.OnRefreshListener, View.OnClickListener,
@@ -84,7 +88,6 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 
 	public static final int LAYOUT = R.layout.activity_main;
 	private static final int MAIN_CONTAINER = R.id.container;
-	private static final int REQUEST_CODE_RESOLVE_ERR = 9000;
 	private PullToRefreshAttacher mPullToRefreshAttacher;
 	private boolean mLocationInProcess;
 	private ProgressDialog mProgressDialog;
@@ -105,14 +108,22 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 
 	@Override
 	public void onConnectionFailed(ConnectionResult _connectionResult) {
-		if (_connectionResult.hasResolution()) {
-			try {
-				_connectionResult.startResolutionForResult(this, REQUEST_CODE_RESOLVE_ERR);
-			} catch (IntentSender.SendIntentException e) {
-				mPlusClient.connect();
-			}
+		try {
+			GooglePlayServicesUtils.onConnectionFailed(this, _connectionResult);
+		} catch (IntentSender.SendIntentException e) {
+			mPlusClient.connect();
 		}
+
 		BusProvider.getBus().post(new GPlusConnectionEvent(mPlusClient));
+	}
+
+	@Subscribe
+	public void onLocationClientConnectionFailed(LocationClientConnectionFailedEvent _e) {
+		try {
+			GooglePlayServicesUtils.onConnectionFailed(this, _e.getConnectionResult());
+		} catch (IntentSender.SendIntentException e) {
+			LL.e("Can't solve the problem of location-client.");
+		}
 	}
 
 	@Override
@@ -134,10 +145,15 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 	@Override
 	protected void onActivityResult(int _requestCode, int _responseCode, Intent _intent) {
 		super.onActivityResult(_requestCode, _responseCode, _intent);
-		if (_requestCode == REQUEST_CODE_RESOLVE_ERR && _responseCode == RESULT_OK) {
-			mPlusClient.connect();
+		switch (_requestCode) {
+		case REQUEST_PLAY_SERVICE_PROBLEM:
+			if (_responseCode == RESULT_OK) {
+				mPlusClient.connect();
+			}
+			break;
 		}
 	}
+
 
 
 	@Subscribe
@@ -164,16 +180,13 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 
 		initCurrentView();
 
-		/*Might init Goolge plus for the case that the last time user had signed in.*/
-		if(Prefs.getInstance().isGooglePlusSigIn()) {
+		/*
+		 * Might init Goolge plus for the case that the last time user had
+		 * signed in.
+		 */
+		if (Prefs.getInstance().isGooglePlusSigIn()) {
 			onGPlusInitilization(null);
 		}
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		OnResumeUtil.onResume(this);
 	}
 
 	/***

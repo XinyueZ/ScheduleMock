@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import schedule.mock.tasks.net.GsonRequestTask;
 import schedule.mock.tasks.net.TaskHelper;
 import schedule.mock.utils.BusProvider;
+import schedule.mock.utils.OnResumeUtil;
 
 public abstract class BaseActivity extends ActionBarActivity {
 
@@ -21,6 +22,12 @@ public abstract class BaseActivity extends ActionBarActivity {
 	}
 
 	@Override
+	protected void onResume() {
+		super.onResume();
+		OnResumeUtil.onResume(this);
+	}
+
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		showOverflowAlways();
@@ -29,7 +36,6 @@ public abstract class BaseActivity extends ActionBarActivity {
 
 	@Override
 	protected void onDestroy() {
-
 		BusProvider.getBus().unregister(this);
 		super.onDestroy();
 	}

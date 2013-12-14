@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
-import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -23,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import schedule.mock.R;
 import schedule.mock.activities.MainActivity;
+import schedule.mock.events.LocationClientConnectionFailedEvent;
 import schedule.mock.events.ServiceLocationChangedEvent;
 import schedule.mock.events.UIShowAfterFinishMockingEvent;
 import schedule.mock.events.UIShowCanNotMockLocationEvent;
@@ -182,8 +182,9 @@ public final class StartLocationTrackingService extends Service implements
 
 	@Override
 	public void onConnectionFailed(ConnectionResult _connectionResult) {
-		// Shut down. Testing can't continue until the problem is fixed.
+		// Shut down. Locating can't continue until the problem is fixed.
 		stopSelf();
+		BusProvider.getBus().post(new LocationClientConnectionFailedEvent(_connectionResult));
 	}
 
 	/***
