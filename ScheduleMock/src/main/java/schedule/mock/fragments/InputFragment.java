@@ -70,7 +70,6 @@ public final class InputFragment extends BaseFragment implements View.OnClickLis
 	@Override
 	public View onCreateView(LayoutInflater _inflater, ViewGroup _container, Bundle _savedInstanceState) {
 		View rootView = _inflater.inflate(LAYOUT, _container, false);
-		Prefs prefs = Prefs.getInstance();
 
 		Bundle args = getArguments();
 		/* Open this view directly from home by clicking voice-input. */

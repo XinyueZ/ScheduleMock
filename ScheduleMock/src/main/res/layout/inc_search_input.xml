@@ -15,6 +15,7 @@
 			android:singleLine="true"
 			android:layout_height="wrap_content"
 			android:lines="1"
+			android:textColor="@android:color/white"
 			android:inputType="textNoSuggestions"
 			android:hint="@string/hint_search_street"
 			android:layout_toLeftOf="@+id/btn_search"
@@ -23,6 +24,7 @@
 	<EditText
 			android:id="@+id/et_mocked_city_name"
 			android:maxLines="1"
+			android:textColor="@android:color/white"
 			android:minLines="1"
 			android:background="@drawable/selector_ics_text_field"
 			android:singleLine="true"
@@ -39,6 +41,7 @@
 	<EditText
 			android:id="@+id/et_mocked_county_name"
 			android:maxLines="1"
+			android:textColor="@android:color/white"
 			android:minLines="1"
 			android:background="@drawable/selector_ics_text_field"
 			android:singleLine="true"
@@ -56,6 +59,7 @@
 	<EditText
 			android:id="@+id/tv_mocked_lanlng"
 			android:maxLines="1"
+			android:textColor="@android:color/white"
 			android:background="@drawable/selector_ics_text_field"
 			android:minLines="1"
 			android:visibility="gone"

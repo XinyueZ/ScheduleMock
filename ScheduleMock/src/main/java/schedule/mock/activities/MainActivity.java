@@ -348,7 +348,7 @@ public final class MainActivity extends BaseActivity implements DrawerLayout.Dra
 					BusProvider.getBus().post(new VoiceInputEvent());
 				} else {
 					/* Open input-view and start voice-input. */
-					onOpenInput(new UIShowInputEvent(true));
+					onOpenInput(new UIShowInputEvent(false));
 				}
 				return true;
 			}
