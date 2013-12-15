@@ -135,8 +135,6 @@ public final class StartLocationTrackingService extends Service implements
 		prefs.setMockLng(_mockStatus ? mMockLocation.getLongitude() + "" : null);
 	}
 
-
-
 	private void forceCloseServiceCantMockLocation() {
 		BusProvider.getBus().post(new UIShowCanNotMockLocationEvent());
 		stopSelf();
@@ -207,9 +205,12 @@ public final class StartLocationTrackingService extends Service implements
 		// intent called later
 		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intentNotify, 0);
 
+		Prefs prefs = Prefs.getInstance();
+		String contentText = new StringBuilder().append(mMockAddressName).append('[').append(prefs.getMockLat())
+				.append(',').append(prefs.getMockLng()).append(']').toString();
 		// Add values to the builder
 		builder = new NotificationCompat.Builder(this).setAutoCancel(false).setSmallIcon(R.drawable.ic_mocking)
-				.setContentTitle(contentTitle).setContentText(mMockAddressName).setContentIntent(pendingIntent);
+				.setContentTitle(contentTitle).setContentText(contentText).setContentIntent(pendingIntent);
 
 		startForeground(ID_TRAY_NOTIFICATION, builder.build());
 	}
@@ -248,7 +249,7 @@ public final class StartLocationTrackingService extends Service implements
 			if (service != null) {
 				while (true) {
 					try {
-						TimeUnit.SECONDS.sleep(1);
+						TimeUnit.SECONDS.sleep(100);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
