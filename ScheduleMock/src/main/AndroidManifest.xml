@@ -67,8 +67,8 @@
 	</compatible-screens>
 
 	<!--<uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />-->
-	<uses-permission android:name="	android.permission.WRITE_SETTINGS" />
-	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
+	<uses-permission android:name="	android.permission.WRITE_SETTINGS"/>
+	<uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 	<uses-permission android:name="android.permission.USE_CREDENTIALS"/>
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -89,7 +89,7 @@
 			android:theme="@style/AppTheme">
 		<meta-data
 				android:name="com.google.android.gms.version"
-				android:value="0x00020000" />
+				android:value="0x00020000"/>
 		<meta-data
 				android:name="com.google.android.maps.v2.API_KEY"
 				android:value="AIzaSyB0WWxwCEXMNvmlFUeT8w9SNMy0inW-hLw"/>
@@ -98,8 +98,13 @@
 
 		<activity
 				android:name=".activities.MainActivity"
-				android:screenOrientation="portrait" android:uiOptions="splitActionBarWhenNarrow"
+				android:screenOrientation="portrait"
+				android:uiOptions="splitActionBarWhenNarrow"
 				android:label="@string/app_name">
+			<!--http://wptrafficanalyzer.in/blog/action-bar-menus-and-splitactionbar-using-actionbarcompat-library-in-android/-->
+			<meta-data
+					android:name="android.support.UI_OPTIONS"
+					android:value="splitActionBarWhenNarrow"/>
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 

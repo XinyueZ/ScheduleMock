@@ -1,15 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<item android:id="@+id/menu_voice_input"
 	      android:title="@string/menu_voice_input"
 	      android:icon="@drawable/selector_btn_voice_input"
 	      app:showAsAction="always" />
 
-    <item android:id="@+id/menu_my_location"
-        android:title="@string/menu_my_location"
-        android:icon="@drawable/selector_btn_my_locaiton"
-        app:showAsAction="always" />
+	<item android:id="@+id/menu_my_location"
+	      android:title="@string/menu_my_location"
+	      android:icon="@drawable/selector_btn_my_locaiton"
+	      app:showAsAction="always" />
 
 	<item android:id="@+id/menu_share"
 	      android:title="@string/menu_share_this_app"
