@@ -143,7 +143,9 @@ public final class StartLocationTrackingService extends Service implements
 	private void setMockLocation(long _elapsedRealtimeNanos, long _currentTime) throws SecurityException {
 		synchronized (LOCK) {
 			if (mInMockMode) {
-				mMockLocation.setAccuracy(3.0f);
+				/*http://stackoverflow.com/questions/15071199/android-mock-location-dont-work-with-google-maps*/
+				mMockLocation.setAccuracy(1);
+				mMockLocation.setSpeed(0.1f);
 				if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
 					mMockLocation.setElapsedRealtimeNanos(_elapsedRealtimeNanos);
 				}
@@ -249,7 +251,7 @@ public final class StartLocationTrackingService extends Service implements
 			if (service != null) {
 				while (true) {
 					try {
-						TimeUnit.SECONDS.sleep(100);
+						TimeUnit.MILLISECONDS.sleep(100);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
