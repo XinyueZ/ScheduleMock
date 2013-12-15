@@ -3,8 +3,12 @@ package schedule.mock.services;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -82,7 +86,9 @@ public final class StartLocationTrackingService extends Service implements
 					mMockLocationContinueTask = null;
 				}
 				setPrefs(false);
-				mLocationClient.setMockMode(false);
+//				mLocationClient.setMockMode(false);
+				removeMockedLocationManager(LocationManager.GPS_PROVIDER);
+				removeMockedLocationManager(LocationManager.NETWORK_PROVIDER);
 				mInMockMode = false;
 				removeNotification();
 				BusProvider.getBus().post(new UIShowAfterFinishMockingEvent());
@@ -107,7 +113,9 @@ public final class StartLocationTrackingService extends Service implements
 		msgResId = R.string.toast_start_location_tracking;
 		if (mInMockMode) {
 			try {
-				mLocationClient.setMockMode(true);
+//				mLocationClient.setMockMode(true);
+				initMockedLocationManager(LocationManager.GPS_PROVIDER);
+				initMockedLocationManager(LocationManager.NETWORK_PROVIDER);
 				setPrefs(true);
 				msgResId = R.string.toast_start_location_mocking;
 				long elapsedRealTime = android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 ? SystemClock
@@ -149,10 +157,30 @@ public final class StartLocationTrackingService extends Service implements
 				if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
 					mMockLocation.setElapsedRealtimeNanos(_elapsedRealtimeNanos);
 				}
-				mMockLocation.setTime(_currentTime);
-				mLocationClient.setMockLocation(mMockLocation);
+				mMockLocation.setTime(System.currentTimeMillis());
+//				mLocationClient.setMockLocation(mMockLocation);
+				updateMockedLocationManager(LocationManager.GPS_PROVIDER);
+				updateMockedLocationManager(LocationManager.NETWORK_PROVIDER);
 			}
 		}
+	}
+
+	private void initMockedLocationManager (String _providerName){
+		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		locationManager.addTestProvider(_providerName, false, false, false, true, false, true, true, Criteria.POWER_LOW, Criteria.ACCURACY_FINE);
+		locationManager.setTestProviderEnabled(_providerName, true);
+	}
+
+	private void updateMockedLocationManager(String _providerName){
+		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		locationManager.setTestProviderStatus(_providerName, LocationProvider.AVAILABLE, null, System.currentTimeMillis());
+		locationManager.setTestProviderLocation(_providerName, mMockLocation);
+	}
+
+	private void removeMockedLocationManager(String _providerName) {
+		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		locationManager.setTestProviderEnabled(_providerName, false);
+		locationManager.removeTestProvider(_providerName);
 	}
 
 	private void startTracking() {

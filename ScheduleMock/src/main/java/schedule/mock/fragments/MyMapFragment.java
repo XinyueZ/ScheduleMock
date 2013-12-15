@@ -2,14 +2,19 @@ package schedule.mock.fragments;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.otto.Subscribe;
+
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import schedule.mock.events.FindMyLocationEvent;
 import schedule.mock.events.ServiceLocationChangedEvent;
@@ -76,6 +81,7 @@ public final class MyMapFragment extends SupportMapFragment implements ICanOpenB
 	private static void setMapLocation(GoogleMap _googleMap, double _lat, double _lng) {
 		LatLng latLng = new LatLng(_lat, _lng);
 		// mMap.setOnMarkerClickListener(this);
+		_googleMap.setLocationSource(new MockLocationSource(latLng));
 		_googleMap.addMarker(new MarkerOptions().position(latLng));
 		_googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, MEDIUM_ZOOM));
 	}
@@ -126,5 +132,71 @@ public final class MyMapFragment extends SupportMapFragment implements ICanOpenB
 	@Override
 	public int getMenuItemPosition() {
 		return MENU_POSITION;
+	}
+
+
+	public static class MockLocationSource implements LocationSource {
+
+		private static final float ACCURACY = 1; // Meters
+		private static final int MAX_SPEED = 10; // m/s
+		private static final double DELTA_LAT = 0.0005;
+		private static final double DELTA_LON = 0.0005;
+
+		private static final long UPDATE_PERIOD = TimeUnit.SECONDS.toMillis(2);
+
+		private final Handler handler = new Handler();
+		private LatLng lastCoordinate ;
+		private OnLocationChangedListener listener;
+
+		public MockLocationSource(LatLng _lastCoordinate) {
+			lastCoordinate = _lastCoordinate;
+		}
+
+		private void scheduleNewFix() {
+			handler.postDelayed(updateLocationRunnable, UPDATE_PERIOD);
+		}
+
+		private final Runnable updateLocationRunnable = new Runnable() {
+
+			@Override
+			public void run() {
+				Location randomLocation = generateRandomLocation();
+				listener.onLocationChanged(randomLocation);
+				scheduleNewFix();
+			}
+		};
+
+		public Location generateRandomLocation() {
+
+			Location location = new Location(getClass().getSimpleName());
+			location.setTime(System.currentTimeMillis());
+			location.setAccuracy(ACCURACY);
+			location.setBearing(randomizer.nextInt(360));
+			location.setSpeed(randomizer.nextInt(MAX_SPEED));
+			location.setLatitude(lastCoordinate.latitude + scaleOffset(DELTA_LAT));
+			location.setLongitude(lastCoordinate.longitude + scaleOffset(DELTA_LON));
+
+			lastCoordinate = new LatLng(location.getLatitude(), location.getLongitude());
+
+			return location;
+		}
+
+		private final static Random randomizer = new Random();
+
+		private double scaleOffset(double value) {
+			return (randomizer.nextDouble() - 0.5) * value;
+		}
+
+		@Override
+		public void activate(LocationSource.OnLocationChangedListener locationChangedListener) {
+			listener = locationChangedListener;
+			scheduleNewFix();
+		}
+
+		@Override
+		public void deactivate() {
+			handler.removeCallbacks(updateLocationRunnable);
+		}
+
 	}
 }
