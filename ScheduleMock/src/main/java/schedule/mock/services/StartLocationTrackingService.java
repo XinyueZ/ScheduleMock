@@ -172,12 +172,14 @@ public final class StartLocationTrackingService extends Service implements
 	}
 
 	private void updateMockedLocationManager(String _providerName){
+		mMockLocation.setProvider(_providerName);
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		locationManager.setTestProviderStatus(_providerName, LocationProvider.AVAILABLE, null, System.currentTimeMillis());
 		locationManager.setTestProviderLocation(_providerName, mMockLocation);
 	}
 
 	private void removeMockedLocationManager(String _providerName) {
+		mMockLocation.setProvider(_providerName);
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		locationManager.setTestProviderEnabled(_providerName, false);
 		locationManager.removeTestProvider(_providerName);
